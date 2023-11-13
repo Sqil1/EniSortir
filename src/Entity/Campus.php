@@ -15,7 +15,7 @@ class Campus
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100)]
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'campus', targetEntity: Participant::class)]
