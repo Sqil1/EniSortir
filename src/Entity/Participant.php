@@ -17,11 +17,20 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $prenom = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $pseudo = null;
+
+    #[ORM\Column(length: 16)]
+    private ?string $telephone = null;
+
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
-
-    #[ORM\Column]
-    private array $roles = [];
 
     /**
      * @var string The hashed password
@@ -29,30 +38,24 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 16)]
-    private ?string $telephone = null;
+    #[ORM\Column]
+    private array $roles = [];
 
     #[ORM\Column]
+    #[ORM\JoinColumn(nullable: true)]
     private ?bool $isAdmin = null;
 
     #[ORM\Column]
+    #[ORM\JoinColumn(nullable: true)]
     private ?bool $isActive = null;
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Campus $campus = null;
 
     #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
+    #[ORM\JoinColumn(nullable: true)]
     private Collection $sorties;
-
-    #[ORM\Column(length: 100)]
-    private ?string $pseudo = null;
 
     public function __construct()
     {
