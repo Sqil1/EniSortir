@@ -2,17 +2,19 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Participant;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use App\Entity\Participant;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private Generator $faker;
 
-    public function __construct()
+
+    public function __construct(UserPasswordHasherInterface $hasher)
     {
         $this->faker = Factory::create('fr_FR');
     }
@@ -25,11 +27,10 @@ class AppFixtures extends Fixture
             $participant->setPseudo($this->faker->userName());
             $participant->setTelephone($this->faker->phoneNumber());
             $participant->setEmail($this->faker->email());
-            $participant->setPassword('password');
             $participant->setRoles(['ROLE_USER']);
             $participant->setIsAdmin($this->faker->boolean());
             $participant->setIsActive($this->faker->boolean());
-
+            $participant->setPlainPassword('password');
             $manager->persist($participant);
         }
 
