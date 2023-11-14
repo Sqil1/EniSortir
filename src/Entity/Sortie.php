@@ -47,7 +47,7 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?etat $etat = null;
+    private ?Etat $etat = null;
 
     public function __construct()
     {
@@ -179,12 +179,12 @@ class Sortie
         return $this;
     }
 
-    public function getEtat(): ?etat
+    public function getEtat(): ?Etat
     {
         return $this->etat;
     }
 
-    public function setEtat(?etat $etat): static
+    public function setEtat(?Etat $etat): static
     {
         $this->etat = $etat;
 
