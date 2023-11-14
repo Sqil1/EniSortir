@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -24,11 +26,13 @@ class SortieType extends AbstractType
             ])
             ->add('dateHeureDebut', DateTimeType::class, [
                 'label' => 'Date et heure de la sortie :',
-                'html5' => true
+                'html5' => true,
+                'widget' => 'single_text'
             ])
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => "Date limite d'inscription :",
-                'html5' => true
+                'html5' => true,
+                'widget' => 'single_text'
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places :'
@@ -43,24 +47,13 @@ class SortieType extends AbstractType
                 'label' => 'Campus'
             ])
 
-            /*->add('ville')*/
+            /*->add('ville')
 
-            ->add('lieu', ChoiceType::class, [
-                'label' => 'Lieu :',
-                'multiple' => false
-            ])
-            ->add('lieu', TextType::class, [
-                'label' => 'Rue :'
-            ])
-            ->add('lieu', IntegerType::class, [
-                'label' => 'Code postal :'
-            ])
-            ->add('lieu', NumberType::class, [
-                'label' => 'Latitude :'
-            ])
-            ->add('lieu', NumberType::class, [
-                'label' => 'Longitude :'
-            ])
+            ->add('lieu', EntityType::class, [
+                'class' => Lieu::class,
+                'choice_label' => 'nom',
+                'label' => 'Lieu :'
+            ])*/
         ;
     }
 

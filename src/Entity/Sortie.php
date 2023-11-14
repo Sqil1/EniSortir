@@ -38,16 +38,20 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
-    #[ORM\ManyToMany(targetEntity: participant::class, inversedBy: 'sorties')]
+    #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?campus $campus = null;
+    private ?Campus $campus = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
+
+    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Participant $organisateur = null;
 
     public function __construct()
     {
@@ -167,12 +171,12 @@ class Sortie
         return $this;
     }
 
-    public function getCampus(): ?campus
+    public function getCampus(): ?Campus
     {
         return $this->campus;
     }
 
-    public function setCampus(?campus $campus): static
+    public function setCampus(?Campus $campus): static
     {
         $this->campus = $campus;
 
@@ -187,6 +191,18 @@ class Sortie
     public function setEtat(?Etat $etat): static
     {
         $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getOrganisateur(): ?Participant
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(?Participant $organisateur): static
+    {
+        $this->organisateur = $organisateur;
 
         return $this;
     }
