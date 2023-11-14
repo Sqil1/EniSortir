@@ -97,7 +97,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-      return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
     public function getPlainPassword()
@@ -182,30 +182,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function isIsAdmin(): ?bool
-    {
-        return $this->isAdmin;
-    }
-
-    public function setIsAdmin(bool $isAdmin): static
-    {
-        $this->isAdmin = $isAdmin;
-
-        return $this;
-    }
-
-    public function isIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): static
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }
