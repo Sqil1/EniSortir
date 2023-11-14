@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid pl-15">
+
+        <!--Logo et nom du site-->
+        <a class="navbar-brand" href="{{ path('home') }}">
+            <img src="{{ asset('images/imageEnTete.png') }}" height="70px" style="display: inline-block" alt="logo">
+            <div class="active typewriter">
+                <h1>Sortir.com</h1>
+            </div>
+        </a>
+
+        <!--Menu des pages principales-->
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav col-10">
+                {% if is_granted("ROLE_ADMIN") %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('home') }}">Villes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('home') }}">Campus</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('home') }}">Mon profil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('home') }}">Se déconnecter</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>

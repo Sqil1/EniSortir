@@ -16,7 +16,7 @@ class Sortie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -25,7 +25,7 @@ class Sortie
     #[ORM\Column]
     private ?int $duree = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
@@ -34,17 +34,20 @@ class Sortie
     #[ORM\Column(type: Types::TEXT)]
     private ?string $infosSortie = null;
 
-    #[ORM\ManyToMany(targetEntity: Participant::class, mappedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lieu $lieu = null;
+
+    #[ORM\ManyToMany(targetEntity: participant::class, inversedBy: 'sorties')]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
-    private ?Etat $etat = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?campus $campus = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
-    private ?Lieu $lieu = null;
-
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
-    private ?Campus $campus = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?etat $etat = null;
 
     public function __construct()
     {
@@ -128,45 +131,6 @@ class Sortie
         return $this;
     }
 
-    /**
-     * @return Collection<int, Participant>
-     */
-    public function getParticipants(): Collection
-    {
-        return $this->participants;
-    }
-
-    public function addParticipant(Participant $participant): static
-    {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
-            $participant->addSorty($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipant(Participant $participant): static
-    {
-        if ($this->participants->removeElement($participant)) {
-            $participant->removeSorty($this);
-        }
-
-        return $this;
-    }
-
-    public function getEtat(): ?Etat
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(?Etat $etat): static
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
-
     public function getLieu(): ?Lieu
     {
         return $this->lieu;
@@ -179,14 +143,50 @@ class Sortie
         return $this;
     }
 
-    public function getCampus(): ?Campus
+    /**
+     * @return Collection<int, participant>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(participant $participant): static
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(participant $participant): static
+    {
+        $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getCampus(): ?campus
     {
         return $this->campus;
     }
 
-    public function setCampus(?Campus $campus): static
+    public function setCampus(?campus $campus): static
     {
         $this->campus = $campus;
+
+        return $this;
+    }
+
+    public function getEtat(): ?etat
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?etat $etat): static
+    {
+        $this->etat = $etat;
 
         return $this;
     }

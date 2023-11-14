@@ -15,10 +15,10 @@ class Lieu
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $rue = null;
 
     #[ORM\Column]
@@ -27,11 +27,12 @@ class Lieu
     #[ORM\Column]
     private ?float $longitude = null;
 
-    #[ORM\OneToMany(mappedBy: 'lieu', targetEntity: Sortie::class)]
-    private Collection $sorties;
-
     #[ORM\ManyToOne(inversedBy: 'lieux')]
-    private ?Ville $ville = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ville $ville = null;
+
+    #[ORM\OneToMany(mappedBy: 'lieu', targetEntity: sortie::class)]
+    private Collection $sorties;
 
     public function __construct()
     {
@@ -91,15 +92,27 @@ class Lieu
         return $this;
     }
 
+    public function getVille(): ?ville
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?ville $ville): static
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, sortie>
      */
     public function getSorties(): Collection
     {
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSorty(sortie $sorty): static
     {
         if (!$this->sorties->contains($sorty)) {
             $this->sorties->add($sorty);
@@ -109,7 +122,7 @@ class Lieu
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSorty(sortie $sorty): static
     {
         if ($this->sorties->removeElement($sorty)) {
             // set the owning side to null (unless already changed)
@@ -117,18 +130,6 @@ class Lieu
                 $sorty->setLieu(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getVille(): ?Ville
-    {
-        return $this->ville;
-    }
-
-    public function setVille(?Ville $ville): static
-    {
-        $this->ville = $ville;
 
         return $this;
     }
