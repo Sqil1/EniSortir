@@ -100,6 +100,13 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
+    public function setAdministrateur(bool $administrateur)
+    {
+        $this->administrateur = $administrateur;
+
+        return $this;
+    }
+
     public function getPlainPassword()
     {
         return $this->plainPassword;

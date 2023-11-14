@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Campus;
 use Faker\Factory;
 use Faker\Generator;
 use App\Entity\Participant;
@@ -20,7 +21,16 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+
         for ($i = 0; $i < 12; $i++) {
+
+            /******Necessaire pour les tests de connexions */
+            $campus = new Campus();
+            $campus->setNom('Saint Herblain');
+            $manager->persist($campus);
+            /******Necessaire pour les tests de connexions */
+
+
             $participant = new Participant();
             $participant->setNom($this->faker->lastName());
             $participant->setPrenom($this->faker->firstName());
@@ -28,7 +38,9 @@ class AppFixtures extends Fixture
             $participant->setTelephone($this->faker->phoneNumber());
             $participant->setEmail($this->faker->email());
             $participant->setActif($this->faker->boolean());
+            $participant->setAdministrateur($this->faker->boolean());
             $participant->setPlainPassword('password');
+            $participant->setCampus($campus);
             $manager->persist($participant);
         }
 
