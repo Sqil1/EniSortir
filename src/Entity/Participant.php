@@ -11,7 +11,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-#[UniqueEntity('email')]
+#[UniqueEntity(fields: ['email'])]
+#[UniqueEntity(fields: ['pseudo'])]
 #[ORM\EntityListeners(['App\EntityListener\UserListener'])]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -20,19 +21,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $pseudo = null;
-
-    #[ORM\Column(length: 16)]
-    private ?string $telephone = null;
-
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 50, unique: true)]
     private ?string $email = null;
 
     private ?string $plainPassword = null;
@@ -40,27 +29,36 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(length: 30)]
+    private ?string $motPasse = null;
+
+    #[ORM\Column(length: 50, unique: true)]
+    private ?string $pseudo = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $prenom = null;
+
+    #[ORM\Column(length: 15)]
+    private ?string $telephone = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    private ?bool $administrateur = null;
 
     #[ORM\Column]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?bool $isAdmin = null;
+    private ?bool $actif = null;
 
-    #[ORM\Column]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?bool $isActive = null;
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
+    private Collection $sorties;
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
 
-    #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
-    #[ORM\JoinColumn(nullable: true)]
-    private Collection $sorties;
+    #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
+    private Collection $inscriptions;
 
     public function __construct()
     {
@@ -99,18 +97,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
+      return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
     public function getPlainPassword()
@@ -127,14 +114,19 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getPassword(): string
     {
-        return $this->password;
+        return $this->motPasse;
     }
 
-    public function setPassword(string $password): static
+    public function setMotPasse(string $motPasse): static
     {
-        $this->password = $password;
+        $this->motPasse = $motPasse;
 
         return $this;
+    }
+
+    public function getMotPasse(): string
+    {
+        return $this->motPasse;
     }
 
     /**
@@ -144,6 +136,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
     }
 
     public function getNom(): ?string
@@ -170,7 +174,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTelehone(): ?string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
@@ -206,14 +210,14 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCampus(): ?Campus
+    public function isActif(): ?bool
     {
-        return $this->campus;
+        return $this->actif;
     }
 
-    public function setCampus(?Campus $campus): static
+    public function setActif(bool $actif): static
     {
-        $this->campus = $campus;
+        $this->actif = $actif;
 
         return $this;
     }
@@ -230,6 +234,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->sorties->contains($sorty)) {
             $this->sorties->add($sorty);
+            $sorty->addParticipant($this);
         }
 
         return $this;
@@ -237,19 +242,51 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeSorty(Sortie $sorty): static
     {
-        $this->sorties->removeElement($sorty);
+        if ($this->sorties->removeElement($sorty)) {
+            $sorty->removeParticipant($this);
+        }
 
         return $this;
     }
 
-    public function getPseudo(): ?string
+    public function getCampus(): ?Campus
     {
-        return $this->pseudo;
+        return $this->campus;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setCampus(?Campus $campus): static
     {
-        $this->pseudo = $pseudo;
+        $this->campus = $campus;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Sortie $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Sortie $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getOrganisateur() === $this) {
+                $inscription->setOrganisateur(null);
+            }
+        }
 
         return $this;
     }

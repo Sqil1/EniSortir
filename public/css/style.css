@@ -43,3 +43,16 @@ footer {
 footer p {
     padding-top: 10px;
 }
+
+/* FORMULAIRE */
+
+label {
+    display: block;
+}
+
+input, textarea, select {
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    width: 150px;
+    max-width: 50%;
+}

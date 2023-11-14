@@ -21,15 +21,15 @@ class Lieu
     #[ORM\Column(length: 50)]
     private ?string $rue = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?float $latitude = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?float $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'lieux')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ville $ville = null;
+    private ?Ville $ville = null;
 
     #[ORM\OneToMany(mappedBy: 'lieu', targetEntity: sortie::class)]
     private Collection $sorties;
