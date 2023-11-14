@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[UniqueEntity('email')]
+#[UniqueEntity('pseudo')]
 #[ORM\EntityListeners(['App\EntityListener\UserListener'])]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
