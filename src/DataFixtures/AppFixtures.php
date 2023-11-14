@@ -27,9 +27,7 @@ class AppFixtures extends Fixture
             $participant->setPseudo($this->faker->userName());
             $participant->setTelephone($this->faker->phoneNumber());
             $participant->setEmail($this->faker->email());
-            $participant->setRoles(['ROLE_USER']);
-            $participant->setIsAdmin($this->faker->boolean());
-            $participant->setIsActive($this->faker->boolean());
+            $participant->setActif($this->faker->boolean());
             $participant->setPlainPassword('password');
             $manager->persist($participant);
         }
