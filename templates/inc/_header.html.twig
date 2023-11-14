@@ -4,17 +4,29 @@
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor04" aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse" id="navbarColor04">
-			<ul class="navbar-nav me-auto">
-				<li class="nav-item">
-					<a class="nav-link active" href="#">Accueil
-						<span class="visually-hidden">(current)</span>
-					</a>
-				</li>
 
+		{% if app.user %}
+			<div class="collapse navbar-collapse" id="navbarColor04"></div>
 
-			</ul>
-
-		</div>
+			<div class="mb-3">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" href="#">Accueil</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Ville</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Campus</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Mon profil</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+					</li>
+				</ul>
+			</div>
+		{% endif %}
 	</div>
 </nav>
