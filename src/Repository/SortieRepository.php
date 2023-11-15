@@ -27,22 +27,23 @@ class SortieRepository extends ServiceEntityRepository
      * @return Sortie[]
      */
 
-    public function findByNomContaining($nom)
+// Dans SortieRepository.php
+    public function findByCriteria(array $criteria): array
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.nom LIKE :nom')
-            ->setParameter('nom', '%'.$nom.'%')
-            ->getQuery()
-            ->getResult();
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        if (!empty($criteria['nom'])) {
+            $queryBuilder->andWhere('s.nom LIKE :nom')
+                ->setParameter('nom', '%' . $criteria['nom'] . '%');
+        }
+        if (!empty($criteria['campus'])) {
+            $queryBuilder->andWhere('s.campus = :campus')
+                ->setParameter('campus', $criteria['campus']);
+        }
+        // les autres filtres ici
+        $query = $queryBuilder->getQuery();
+        return $query->getResult();
+
     }
 
-    public function findParticipations(Participant $participant)
-    {
-        return $this->createQueryBuilder('s')
-            ->join('s.participants', 'p')
-            ->andWhere('p.id = :participantId')
-            ->setParameter('participantId', $participant->getId())
-            ->getQuery()
-            ->getResult();
-    }
 }

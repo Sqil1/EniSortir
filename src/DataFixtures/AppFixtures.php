@@ -3,6 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Campus;
+use App\Entity\Etat;
+use App\Entity\Lieu;
+use App\Entity\Ville;
 use Faker\Factory;
 use Faker\Generator;
 use App\Entity\Participant;
@@ -22,8 +25,35 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Données Campus pour test 
-        $campus = new Campus();
-        $campus->setNom('SAINT-HERBLAIN');
+
+        $campusNames = ['SAINT-HERBLAIN', 'CHARTRES DE BRETAGNE', 'LA ROCHE SUR YON'];
+
+        foreach ($campusNames as $name) {
+            $campus = new Campus();
+            $campus->setNom($name);
+
+            $manager->persist($campus);
+        }
+
+        $etatName = ['Ouvert', 'Fermé', 'En-cours'];
+
+        foreach ($etatName as $name) {
+            $etat = new Etat();
+            $etat->setLibelle($name);
+
+            $manager->persist($etat);
+        }
+
+        $faker = Factory::create('fr_FR');
+
+        for ($i = 0; $i < 10; $i++) {
+            $ville = new Ville();
+            $ville->setNom($faker->city);
+            $ville->setCodePostal($faker->postcode);
+
+            $manager->persist($ville);
+        }
+
 
         $manager->persist($campus);
 
@@ -43,6 +73,9 @@ class AppFixtures extends Fixture
 
             $manager->persist($participant);
         }
+        $villes = $manager->getRepository(Ville::class)->findAll();
+
+
 
         $manager->flush();
     }

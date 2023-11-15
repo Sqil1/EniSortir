@@ -4,7 +4,9 @@ namespace App\Form;
 
 use App\Entity\Campus;
 use App\Entity\Sortie;
+
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -19,17 +21,13 @@ class ListeSortiesType extends AbstractType
             ->add('nom', TextType::class, [
                 'required' => false, // Pour permettre la recherche vide
             ])
-            ->add('dateHeureDebut')
+
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Sélectionnez un campus',
                 'required' => false,
             ])
-            ->add('isParticipant', CheckboxType::class, [
-                'required' => false,
-                'label' => 'Participations'
-            ]);
 
         ;
     }
