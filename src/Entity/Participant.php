@@ -29,7 +29,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 255)]
     private ?string $motPasse = null;
 
     #[ORM\Column(length: 50, unique: true)]

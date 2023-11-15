@@ -15,12 +15,17 @@ class AppFixtures extends Fixture
     private Generator $faker;
 
 
-    public function __construct(UserPasswordHasherInterface $hasher)
+    public function __construct()
     {
         $this->faker = Factory::create('fr_FR');
     }
     public function load(ObjectManager $manager): void
     {
+        // Données Campus pour test 
+        $campus = new Campus();
+        $campus->setNom('SAINT-HERBLAIN');
+
+        $manager->persist($campus);
 
         for ($i = 0; $i < 12; $i++) {
 
@@ -33,6 +38,9 @@ class AppFixtures extends Fixture
             $participant->setActif($this->faker->boolean());
             $participant->setAdministrateur($this->faker->boolean());
             $participant->setPlainPassword('password');
+
+            $participant->setCampus($campus);
+
             $manager->persist($participant);
         }
 

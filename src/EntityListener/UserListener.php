@@ -33,5 +33,6 @@ class UserListener
         $participant->getPlainPassword()
       )
     );
+    $participant->setPlainPassword(null);
   }
 }
