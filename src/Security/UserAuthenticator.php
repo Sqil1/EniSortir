@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
@@ -35,12 +36,15 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
         // $email = $request->request->get('email', '');
         $username = $request->request->get('username', '');
 
-        //$request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
-        $request->getSession()->set('_security.last_username', $username);
+        $user = $this->participantRepository->findOneByEmailOrUsername($username);
+
+
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
+        //$request->getSession()->set('_security.last_username', $username);
         return new Passport(
-            //new UserBadge($username),
-            new UserBadge($username, fn ($userIdentifier) => $this->participantRepository->findOneByEmailOrUsername($userIdentifier)),
+            new UserBadge($username, fn ($userIdentifier) =>  $this->participantRepository->findOneByEmailOrUsername($userIdentifier)),
             new PasswordCredentials($request->request->get('password', '')),
+
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
                 new RememberMeBadge(),
@@ -62,5 +66,10 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    {
+        dd($exception->getMessage());
     }
 }

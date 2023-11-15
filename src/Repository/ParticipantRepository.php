@@ -28,14 +28,14 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    public function upgradePassword(PasswordAuthenticatedUserInterface $participant, string $newHashedPassword): void
     {
-        if (!$user instanceof Participant) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+        if (!$participant instanceof Participant) {
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $participant::class));
         }
 
-        $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
+        $participant->setMotPasse($newHashedPassword);
+        $this->getEntityManager()->persist($participant);
         $this->getEntityManager()->flush();
     }
 
@@ -66,6 +66,7 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
 
     public function findOneByEmailOrUsername(string $identifier): ?Participant
     {
+
         return $this->createQueryBuilder('p')
             ->andWhere('p.email = :identifier OR p.pseudo = :identifier')
             ->setParameter('identifier', $identifier)

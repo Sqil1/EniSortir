@@ -27,11 +27,12 @@ class UserListener
     if ($participant->getPlainPassword() === null) {
       return;
     }
-    $participant->setPassword(
+    $participant->setMotPasse(
       $this->hasher->hashPassword(
         $participant,
         $participant->getPlainPassword()
       )
     );
+    $participant->setPlainPassword(null);
   }
 }

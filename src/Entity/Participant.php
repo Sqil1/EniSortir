@@ -29,7 +29,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 255)]
     private ?string $motPasse = null;
 
     #[ORM\Column(length: 50, unique: true)]
@@ -97,7 +97,14 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-      return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+    }
+
+    public function setAdministrateur(bool $administrateur)
+    {
+        $this->administrateur = $administrateur;
+
+        return $this;
     }
 
     public function getPlainPassword()
@@ -182,30 +189,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function isIsAdmin(): ?bool
-    {
-        return $this->isAdmin;
-    }
-
-    public function setIsAdmin(bool $isAdmin): static
-    {
-        $this->isAdmin = $isAdmin;
-
-        return $this;
-    }
-
-    public function isIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): static
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }
