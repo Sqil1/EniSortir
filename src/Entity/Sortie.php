@@ -206,4 +206,28 @@ class Sortie
 
         return $this;
     }
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isParticipant;
+
+    /**
+     * @return bool
+     */
+    public function getIsParticipant(): bool
+    {
+        return $this->isParticipant;
+    }
+
+    /**
+     * @param bool $isParticipant
+     * @return $this
+     */
+    public function setIsParticipant(bool $isParticipant): self
+    {
+        $this->isParticipant = $isParticipant;
+
+        return $this;
+    }
 }
