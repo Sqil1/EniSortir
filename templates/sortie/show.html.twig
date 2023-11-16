@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{#en attendant l'affichage#}
+{% block title %}Sortir | Sortie
+{% endblock %}
+
+{% block body %}
+
+	<h1>Afficher une sortie</h1>
+
+	<div>
+
+		{{ form_start(sortieForm) }}
+
+		{{ form_widget(sortieForm) }}
+
+		{{ form_end(sortieForm) }}
+
+		{#{% if sortieIsOpen and deadlineNotPassed %}{% endif %}#}
+		<a href="{{ path('inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
+
+	</div>
+
+{% endblock %}
