@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Participant;
+use App\Data\SearchData;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,23 +27,43 @@ class SortieRepository extends ServiceEntityRepository
      * @return Sortie[]
      */
 
-// Dans SortieRepository.php
-    public function findByCriteria(array $criteria): array
+    public function findSearch(SearchData $search)
     {
-        $queryBuilder = $this->createQueryBuilder('s');
+        $query = $this
+            ->createQueryBuilder('s')
+            ->select('c', 's')
+            ->join('s.campus', 'c')
+            ->join('s.organisateur', 'p');
 
-        if (!empty($criteria['nom'])) {
-            $queryBuilder->andWhere('s.nom LIKE :nom')
-                ->setParameter('nom', '%' . $criteria['nom'] . '%');
+        if (!empty($search->s)){
+            $query = $query
+                ->andWhere('s.nom LIKE :q')
+                ->setParameter('q', "%{$search->s}%");
         }
-        if (!empty($criteria['campus'])) {
-            $queryBuilder->andWhere('s.campus = :campus')
-                ->setParameter('campus', $criteria['campus']);
+        if (!empty($search->campus)) {
+            $query = $query
+                ->andWhere('s.campus = :campus')
+                ->setParameter('campus', $search->campus);
         }
-        // les autres filtres ici
-        $query = $queryBuilder->getQuery();
-        return $query->getResult();
+        if (!empty($search->dateDebut)) {
+            $query = $query
+                ->andWhere('s.dateHeureDebut >= :dateDebut')
+                ->setParameter('dateDebut', $search->dateDebut);
+        }
+        if (!empty($search->dateFin)) {
+            $query = $query
+                ->andWhere('s.dateHeureDebut <= :dateFin')
+                ->setParameter('dateFin', $search->dateFin);
+        }
+        if (!empty($search->isOrganisateur)) {
+            $query = $query
+                ->andWhere('s.organisateur = :isOrganisateur')
+                ->setParameter('isOrganisateur', $search->organisateur);
+        }
 
+        return $query->getQuery()->getResult();
     }
+
+
 
 }

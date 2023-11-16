@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -80,7 +81,7 @@ class Sortie
         return $this->dateHeureDebut;
     }
 
-    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): static
+    public function setDateHeureDebut(?\DateTimeInterface $dateHeureDebut): static
     {
         $this->dateHeureDebut = $dateHeureDebut;
 
@@ -206,28 +207,6 @@ class Sortie
 
         return $this;
     }
-    /**
-     * @var bool
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isParticipant;
 
-    /**
-     * @return bool
-     */
-    public function getIsParticipant(): bool
-    {
-        return $this->isParticipant;
-    }
-
-    /**
-     * @param bool $isParticipant
-     * @return $this
-     */
-    public function setIsParticipant(bool $isParticipant): self
-    {
-        $this->isParticipant = $isParticipant;
-
-        return $this;
-    }
 }
+
