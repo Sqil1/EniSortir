@@ -14,7 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ParticipantController extends AbstractController
 {
-    #[Route('/participant/edition/{id}', name: 'participant.edit', methods: ['GET', 'POST'])]
+    #[Route('/participant/edit/{id}', name: 'participant.edit', methods: ['GET', 'POST'])]
     public function edit(Participant $participant, Request $request, EntityManagerInterface $manager,  UserPasswordHasherInterface $hasher): Response
     {
         if (!$this->getUser()) {
@@ -47,6 +47,14 @@ class ParticipantController extends AbstractController
         }
         return $this->render('participant/edit.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/participant/show/{id}', name: 'participant.show', methods: ['GET'])]
+    public function show(Participant $participant): Response
+    {
+        return $this->render('participant/show.html.twig', [
+            'participant' => $participant,
         ]);
     }
 }
