@@ -1,0 +1,38 @@
+{# templates/participant/show.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortir | Mon profil
+{% endblock %}
+
+{% block body %}
+	<h1>{{ participant.pseudo }}</h1>
+	<form method="post" action="{{ path('participant.show', {'id': participant.id}) }}">
+		<div class="mb-3">
+			<label for="prenom" class="form-label">Prénom</label>
+			<input type="text" class="form-control" id="prenom" name="prenom" value="{{ participant.prenom }}" readonly>
+		</div>
+
+		<div class="mb-3">
+			<label for="nom" class="form-label">Nom</label>
+			<input type="text" class="form-control" id="nom" name="nom" value="{{ participant.nom }}" readonly>
+		</div>
+
+		<div class="mb-3">
+			<label for="telephone" class="form-label">Téléphone</label>
+			<input type="tel" class="form-control" id="telephone" name="telephone" value="{{ participant.telephone }}" readonly>
+		</div>
+
+		<div class="mb-3">
+			<label for="email" class="form-label">Email</label>
+			<input type="email" class="form-control" id="email" name="email" value="{{ participant.email }}" readonly>
+		</div>
+
+		<div class="mb-3">
+			<label for="campus" class="form-label">Campus</label>
+			<input type="text" class="form-control" id="campus" name="campus" value="{{ participant.campus.nom }}" readonly>
+		</div>
+
+		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
+	</form>
+{% endblock %}

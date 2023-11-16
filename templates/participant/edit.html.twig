@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortir | Mon profil
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-4">Mon profil</h1>
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+		{{form(form)}}
+			<a href="{{ path("home") }}" class="btn btn-secondary">Annuler</a>
+		</div>
+	{% endblock %}
