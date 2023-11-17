@@ -45,7 +45,7 @@ footer p {
 }
 
 /* FORMULAIRE */
-
+/*
 label {
     display: block;
 }
@@ -55,6 +55,9 @@ input, textarea, select {
     box-sizing: border-box;
     width: 150px;
     max-width: 50%;
+}*/
+#sortie_infosSortie {
+    height: 8rem;
 }
 /* Styles pour le tableau d'affichage des sorties*/
 
