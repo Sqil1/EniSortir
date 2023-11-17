@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bundle\SecurityBundle\Security;
+use http\Message;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -18,25 +20,40 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Veuillez renseigner le nom de la sortie")]
+    #[Assert\Length( max: 50,
+        maxMessage: 'Le nom doit avoir au maximum {{ limit }} caractères'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: "Veuillez renseigner la date et l'heure de la sortie")]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Veuillez renseigner la durée de la sortie")]
+    #[Assert\Type(type:"integer", message: "Veuillez entrer un nombre")]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank(message: "Veuillez renseigner la date limite d'inscription")]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Veuillez renseigner le nombre maximal de participants")]
+    #[Assert\Type(type:"integer", message: "Veuillez entrer un nombre")]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "Veuillez renseigner une description de la sortie")]
+    #[Assert\Length( max: 500,
+        maxMessage: 'Le texte ne doit pas dépasser {{ limit }} caractères'
+    )]
     private ?string $infosSortie = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez renseigner le lieu")]
     private ?Lieu $lieu = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
@@ -81,7 +98,7 @@ class Sortie
         return $this->dateHeureDebut;
     }
 
-    public function setDateHeureDebut(?\DateTimeInterface $dateHeureDebut): static
+    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): static
     {
         $this->dateHeureDebut = $dateHeureDebut;
 
