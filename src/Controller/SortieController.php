@@ -48,7 +48,8 @@ class SortieController extends AbstractController
         $etatOuverte = $etat->findOneBy(['libelle' => 'Ouverte']);
         if (
             !$etatOuverte ||
-            $sortie->getDateLimiteInscription() < new \DateTime() ||
+            $sortie->getEtat() !== $etatOuverte ||
+            new \DateTime() > $sortie->getDateLimiteInscription() ||
             $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()
         ) {
             return $this->redirectToRoute('home');
@@ -56,11 +57,7 @@ class SortieController extends AbstractController
 
         $sortie->addParticipant($participant);
 
-
         $manager->flush();
-        return $this->render('sortie/show.html.twig', [
-            'sortie' => $sortie,
-            'participant' => $participant,
-        ]);
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
     }
 }
