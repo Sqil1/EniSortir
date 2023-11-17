@@ -63,14 +63,23 @@
 			<input type="text" class="form-control" id="longitude" name="longitude" value="{{ sortie.lieu.longitude }}" readonly>
 		</div>
 
+		<div class="mb-3">
+			<h2>Liste des participants inscrits</h2>
+			{% if sortie.participants is not empty %}
+				<select class="form-select" name="participants" id="participants">
+					{% for participant in sortie.participants %}
+						<option value="{{ participant.pseudo }}">{{ participant.nom }}
+							{{ participant.prenom }}</option>
+					{% endfor %}
+				</select>
+			{% else %}
+				<p>Aucun participant inscrit pour le moment.</p>
+			{% endif %}
+		</div>
+
 		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
-	</form>
-	<div>
-
-
 		<a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
-		<a href="{{ path('home') }}">Retour</a>
-
-	</div>
+	</form>
+	<div></div>
 
 {% endblock %}
