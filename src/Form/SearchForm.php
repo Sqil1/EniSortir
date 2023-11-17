@@ -51,7 +51,7 @@ class SearchForm extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('isOrganisateur', CheckboxType::class, [
-                'label' => 'Organisateur',
+                'label' => 'Sorties dont je suis l\'organisateur/trice',
                 'required' => false,
             ])
 
