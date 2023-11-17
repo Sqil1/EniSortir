@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {#en attendant l'affichage#}
-{% block title %}Sortir | Sortie
+
+{% block title %}Sortir |
+	{{ sortie.nom }}
 {% endblock %}
 
 {% block body %}
@@ -63,12 +65,16 @@
 			<input type="text" class="form-control" id="longitude" name="longitude" value="{{ sortie.lieu.longitude }}" readonly>
 		</div>
 
+
 		<div class="mb-3">
 			<h2>Liste des participants inscrits</h2>
+
 			{% if sortie.participants is not empty %}
-				<select class="form-select" name="participants" id="participants">
+				<select class="form-select" name="participants" id="participants" size="5">
 					{% for participant in sortie.participants %}
-						<option value="{{ participant.pseudo }}">{{ participant.nom }}
+						<option value="{{ participant.pseudo }}">{{ participant.pseudo }}
+							-
+							{{ participant.nom }}
 							{{ participant.prenom }}</option>
 					{% endfor %}
 				</select>
@@ -80,6 +86,5 @@
 		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
 		<a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
 	</form>
-	<div></div>
 
 {% endblock %}
