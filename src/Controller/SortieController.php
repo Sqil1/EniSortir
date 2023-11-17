@@ -60,4 +60,33 @@ class SortieController extends AbstractController
         $manager->flush();
         return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
     }
+
+    #[Route('/desistement/{id}', name: 'desistement')]
+    public function desister(Sortie $sortie, EntityManagerInterface $manager): Response
+    {
+        $participant = $this->getUser();
+
+        $now = new \DateTime();
+
+        if (
+            $sortie->getDateHeureDebut() > $now &&
+            $sortie->getDateLimiteInscription() > $now
+        ) {
+
+            $participant = $this->getUser();
+            $sortie->removeParticipant($participant);
+
+            $manager->flush();
+
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        } else {
+
+            $this->addFlash(
+                'warning',
+                'Vous ne pouvez pas vous désister de cette sortie.'
+            );
+
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
+    }
 }
