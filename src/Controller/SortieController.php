@@ -105,25 +105,21 @@ class SortieController extends AbstractController
 
         $now = new \DateTime();
 
-        if (
-            $sortie->getDateHeureDebut() > $now &&
-            $sortie->getDateLimiteInscription() > $now
-        ) {
-
-            $participant = $this->getUser();
+        if ($sortie->getDateHeureDebut() > $now && $sortie->getEtat()->getLibelle() === 'Ouverte') {
             $sortie->removeParticipant($participant);
-
             $manager->flush();
 
-            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+            $this->addFlash(
+                'success',
+                'Vous vous êtes désisté de la sortie avec succès.'
+            );
         } else {
-
             $this->addFlash(
                 'warning',
                 'Vous ne pouvez pas vous désister de cette sortie.'
             );
-
-            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
+
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
     }
 }
