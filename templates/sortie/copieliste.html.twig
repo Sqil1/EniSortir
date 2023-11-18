@@ -29,21 +29,23 @@
 						<th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
 						<th>{{sortie.participants.count()}}/{{ sortie.nbInscriptionsMax }}</th>
 						<th>{{ sortie.etat.libelle }}</th>
-						<th></th>
+						<th>
+							{% if sortie.participants.contains(participant) %}✔
+							{% endif %}
+						</th>
 						<th>{{ sortie.organisateur.nom }}</th>
 						<th>
-
 							<a href="{{ path('sortie_detail', {'id': sortie.id}) }}" class="btn btn-secondary">Afficher</a>
 							{% if is_granted('ROLE_USER') and sortie.dateHeureDebut > 'now' and sortie.etat.libelle is same as('Ouverte') %}
 								{% set userIsParticipant = sortie.participants.contains(participant) %}
-								<a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary{% if userIsParticipant %} disabled{% endif %}">S'inscrire</a>
-
-
 								{% if userIsParticipant %}
 									<a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se désister</a>
+								{% else %}
+									<a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
 								{% endif %}
 							{% endif %}
 						</th>
+
 					</tr>
 					{#                {% endif %}#}
 				{% endfor %}
