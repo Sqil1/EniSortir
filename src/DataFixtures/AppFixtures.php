@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
         }
 
         // Villes
-        for ($j = 0; $j < 12; $j++) {
+        for ($j = 0; $j < 20; $j++) {
             $ville = new Ville();
             $ville->setNom($this->faker->city());
             $ville->setCodePostal($this->faker->postcode());
@@ -58,7 +58,7 @@ class AppFixtures extends Fixture
         }
 
         // Lieux
-        for ($k = 0; $k < 12; $k++) {
+        for ($k = 0; $k < 20; $k++) {
             $lieu = new Lieu();
             $lieu->setNom($this->faker->company);
             $lieu->setRue($this->faker->streetAddress);
@@ -92,7 +92,7 @@ class AppFixtures extends Fixture
         }
 
         // Sorties
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $sortie = new Sortie();
             $sortie
                 ->setNom($this->faker->word())
@@ -108,7 +108,18 @@ class AppFixtures extends Fixture
             $organisateur = $this->faker->randomElement($participants);
             $sortie->setOrganisateur($organisateur);
 
+            // Sortie_Participant
+            $nbParticipants = $this->faker->numberBetween(1, $sortie->getNbInscriptionsMax());
+            $participantsSortie = $this->faker->randomElements($participants, $nbParticipants);
+            foreach ($participantsSortie as $participantSortie) {
+                $sortie->addParticipant($participantSortie);
+                $participantSortie->addSorty($sortie);
+            }
+
             $manager->persist($sortie);
+        }
+        foreach ($participants as $participant) {
+            $manager->persist($participant);
         }
 
         $manager->flush();
