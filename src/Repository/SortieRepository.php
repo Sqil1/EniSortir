@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Data\SearchData;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,28 +22,48 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-//    /**
-//     * @return Sortie[] Returns an array of Sortie objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Récupère toutes les sorties en fonction de la recherche
+     * @return Sortie[]
+     */
 
-//    public function findOneBySomeField($value): ?Sortie
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findSearch(SearchData $search)
+    {
+        $query = $this
+            ->createQueryBuilder('s')
+            ->select('c', 's')
+            ->join('s.campus', 'c')
+            ->join('s.organisateur', 'p');
+
+        if (!empty($search->s)){
+            $query = $query
+                ->andWhere('s.nom LIKE :q')
+                ->setParameter('q', "%{$search->s}%");
+        }
+        if (!empty($search->campus)) {
+            $query = $query
+                ->andWhere('s.campus = :campus')
+                ->setParameter('campus', $search->campus);
+        }
+        if (!empty($search->dateDebut)) {
+            $query = $query
+                ->andWhere('s.dateHeureDebut >= :dateDebut')
+                ->setParameter('dateDebut', $search->dateDebut);
+        }
+        if (!empty($search->dateFin)) {
+            $query = $query
+                ->andWhere('s.dateHeureDebut <= :dateFin')
+                ->setParameter('dateFin', $search->dateFin);
+        }
+        if (!empty($search->isOrganisateur)) {
+            $query = $query
+                ->andWhere('s.organisateur = :isOrganisateur')
+                ->setParameter('isOrganisateur', $search->organisateur);
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+
+
 }

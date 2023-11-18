@@ -3,5 +3,16 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-<h1 style="min-height: 500px">block central</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert-{{ label }} alert alert-success my-2" role="alert" style="text-align: center">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+
+    <h1 style="min-height: 500px">Page d'accueil</h1>
+
 {% endblock %}

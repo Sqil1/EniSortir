@@ -45,7 +45,7 @@ footer p {
 }
 
 /* FORMULAIRE */
-
+/*
 label {
     display: block;
 }
@@ -55,4 +55,98 @@ input, textarea, select {
     box-sizing: border-box;
     width: 150px;
     max-width: 50%;
+}*/
+#sortie_infosSortie {
+    height: 8rem;
 }
+/* Styles pour le tableau d'affichage des sorties*/
+
+.container-filtre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.container-filtre .filtre-campus {
+    margin-right: 10px;
+}
+
+.container-filtre .checkbox-filtre-sortie {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.checkbox-filtre-sortie ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox-filtre-sortie li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-filtre-sortie label {
+    width: 100%;
+}
+.checkbox-filtre-sortie input {
+    width: 20%;
+
+  }
+.container-filtre button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.container-filtre .checkbox-filtre-sortie,
+.container-filtre button {
+    margin-left: 10px;
+}
+
+/* Styles pour le tableau d'affichage des sorties*/
+.tab-liste-sortie {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.tab-liste-sortie th, .tab-liste-sortie td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.tab-liste-sortie th {
+    background-color: #f2f2f2;
+}
+
+
+.tab-liste-sortie tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.tab-liste-sortie td:last-child {
+    width: 150px;
+}
+
+/* FIN Styles pour le tableau d'affichage des sorties*/
