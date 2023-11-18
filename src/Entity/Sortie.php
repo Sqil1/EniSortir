@@ -224,6 +224,13 @@ class Sortie
 
         return $this;
     }
+    public function getNombreParticipantsInscrits(): int
+    {
+        /** @var Collection $participants */
+        $participants = $this->participants;
+
+        return $participants->count();
+    }
 
 }
 

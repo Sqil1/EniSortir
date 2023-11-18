@@ -60,10 +60,18 @@ class SortieRepository extends ServiceEntityRepository
                 ->andWhere('s.organisateur = :isOrganisateur')
                 ->setParameter('isOrganisateur', $search->organisateur);
         }
-
         return $query->getQuery()->getResult();
     }
 
-
+    public function findInscritCount($sortieId)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id AS sortie_id, COUNT(p) AS nombre_participants')
+            ->join('s.participants', 'p')
+            ->where('s.id = :sortieId')
+            ->setParameter('sortieId', $sortieId)
+            ->getQuery()
+            ->getSingleResult();
+    }
 
 }

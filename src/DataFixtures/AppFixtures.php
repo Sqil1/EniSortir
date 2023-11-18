@@ -2,80 +2,114 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Campus;
-use App\Entity\Etat;
-use App\Entity\Lieu;
-use App\Entity\Ville;
 use Faker\Factory;
+use App\Entity\Etat;
 use Faker\Generator;
+use App\Entity\Ville;
+use App\Entity\Campus;
+use App\Entity\Lieu;
+use App\Entity\Sortie;
 use App\Entity\Participant;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private Generator $faker;
 
-
     public function __construct()
     {
         $this->faker = Factory::create('fr_FR');
     }
+
     public function load(ObjectManager $manager): void
     {
-        // Données Campus pour test 
-
+        // Campus
         $campusNames = ['SAINT-HERBLAIN', 'CHARTRES DE BRETAGNE', 'LA ROCHE SUR YON'];
 
-        foreach ($campusNames as $name) {
+        foreach ($campusNames as $i => $campusName) {
             $campus = new Campus();
-            $campus->setNom($name);
+            $campus->setNom($campusName);
 
             $manager->persist($campus);
+            // référence pour chaque entité Campus
+            $this->addReference('campus_' . $i, $campus);
         }
 
-        $etatName = ['Ouvert', 'Fermé', 'En-cours'];
+        // Etat
+        $etatNames = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'passée', 'Annulé'];
 
-        foreach ($etatName as $name) {
+        foreach ($etatNames as $i => $etatName) {
             $etat = new Etat();
-            $etat->setLibelle($name);
+            $etat->setLibelle($etatName);
 
             $manager->persist($etat);
+            $this->addReference('etat_' . $i, $etat);
         }
 
-        $faker = Factory::create('fr_FR');
-
-        for ($i = 0; $i < 10; $i++) {
+        // Villes
+        for ($j = 0; $j < 12; $j++) {
             $ville = new Ville();
-            $ville->setNom($faker->city);
-            $ville->setCodePostal($faker->postcode);
+            $ville->setNom($this->faker->city());
+            $ville->setCodePostal($this->faker->postcode());
 
             $manager->persist($ville);
+            $this->addReference('ville_' . $j, $ville);
         }
 
+        // Lieux
+        for ($k = 0; $k < 12; $k++) {
+            $lieu = new Lieu();
+            $lieu->setNom($this->faker->company);
+            $lieu->setRue($this->faker->streetAddress);
+            $lieu->setLatitude($this->faker->latitude);
+            $lieu->setLongitude($this->faker->longitude);
+            $lieu->setVille($this->getReference('ville_' . $k));
 
-        $manager->persist($campus);
+            $manager->persist($lieu);
+            $this->addReference('lieu_' . $k, $lieu);
+        }
 
+        // Participants
+        $participants = [];
         for ($i = 0; $i < 12; $i++) {
-
             $participant = new Participant();
-            $participant->setNom($this->faker->lastName());
-            $participant->setPrenom($this->faker->firstName());
-            $participant->setPseudo($this->faker->userName());
-            $participant->setTelephone($this->faker->phoneNumber());
-            $participant->setEmail($this->faker->email());
-            $participant->setActif($this->faker->boolean());
-            $participant->setAdministrateur($this->faker->boolean());
-            $participant->setPlainPassword('password');
+            $participant
+                ->setNom($this->faker->lastName())
+                ->setPrenom($this->faker->firstName())
+                ->setPseudo($this->faker->userName())
+                ->setTelephone($this->faker->phoneNumber())
+                ->setEmail($this->faker->email())
+                ->setActif($this->faker->boolean())
+                ->setAdministrateur($this->faker->boolean())
+                ->setPlainPassword('password');
 
+            $campus = $this->getReference('campus_' . $this->faker->numberBetween(0, 2));
             $participant->setCampus($campus);
 
             $manager->persist($participant);
+            $participants[] = $participant;
         }
-        $villes = $manager->getRepository(Ville::class)->findAll();
 
+        // Sorties
+        for ($i = 0; $i < 12; $i++) {
+            $sortie = new Sortie();
+            $sortie
+                ->setNom($this->faker->word())
+                ->setDateHeureDebut($this->faker->dateTimeThisYear())
+                ->setDuree($this->faker->numberBetween(30, 240))
+                ->setDateLimiteInscription($this->faker->dateTimeThisMonth('+2 weeks'))
+                ->setNbInscriptionsMax($this->faker->randomDigit())
+                ->setInfosSortie($this->faker->sentence())
+                ->setLieu($this->getReference('lieu_' . $i))
+                ->setCampus($this->getReference('campus_' . $this->faker->numberBetween(0, 2)))
+                ->setEtat($this->getReference('etat_' . $this->faker->numberBetween(0, 5)));
 
+            $organisateur = $this->faker->randomElement($participants);
+            $sortie->setOrganisateur($organisateur);
+
+            $manager->persist($sortie);
+        }
 
         $manager->flush();
     }

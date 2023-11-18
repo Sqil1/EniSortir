@@ -2,7 +2,9 @@
 
 {% block body %}
 
+<div class="container">
     {% include 'sorties/filter.html.twig' with {form: form} only%}
+</div>
 
 
     <section class="">
@@ -10,7 +12,7 @@
 
 
         </div>
-        <table class="tab-liste-sortie">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>Nom de la sortie</th>
@@ -30,7 +32,7 @@
                         <th>{{ sortie.nom }}</th>
                         <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
                         <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
-                        <th>0/{{ sortie.nbInscriptionsMax }}</th>
+                        <th>{{ participantsInscrits[sortie.id]['nombre_participants'] }}/{{ sortie.nbInscriptionsMax }}</th>
                         <th>{{ sortie.etat.libelle }}</th>
                         <th></th>
                         <th>{{ sortie.organisateur.nom }}</th>

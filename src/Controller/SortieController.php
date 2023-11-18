@@ -23,11 +23,11 @@ class SortieController extends AbstractController
                             EtatRepository $etatRepository): Response
     {
         /*récupération d'un participant et un campus - A RECUPERER AVEC LA SESSION*/
-        $organisateur = $participantRepository->find(1);
+        $organisateur = $participantRepository->find(10);
 
         /*l'état est 'Créée' si validation avec 'Enregistrer', sinon il est 'Ouverte'*/
         //decaler la récupération de l'état après handlerequest ?
-        $etat = $etatRepository->find(1);
+        $etat = $etatRepository->find(10);
 
         $sortie = new Sortie();
         $sortie->setEtat($etat);
