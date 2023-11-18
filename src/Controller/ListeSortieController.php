@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Data\SearchData;
 
 use App\Form\SearchForm;
@@ -21,6 +22,13 @@ class ListeSortieController extends AbstractController
         $form = $this->createForm(SearchForm::class, $data);
         $form->handleRequest($request);
 
+        //Ajout pour les boutons d'actions
+        $participant = null;
+        $currentUser = $security->getUser();
+        if ($currentUser instanceof Participant) {
+            $participant = $currentUser;
+        }
+
         if (isset($data->isOrganisateur) && $data->isOrganisateur) {
             $currentUser = $security->getUser();
             $organisateurId = $currentUser ? $currentUser->getId() : null;
@@ -29,8 +37,9 @@ class ListeSortieController extends AbstractController
 
         $sorties = $sortieRepository->findSearch($data);
         //dd($data);
-        return $this->render('sortie/liste.html.twig', [
+        return $this->render('sortie/copieliste.html.twig', [
             'sorties' => $sorties,
+            'participant' => $participant,
             'form' => $form->createView()
         ]);
     }

@@ -70,25 +70,27 @@
 			<h2>Liste des participants inscrits</h2>
 
 			{% if sortie.participants is not empty %}
-				<select class="form-select" name="participants" id="participants" size="5">
-					{% for participant in sortie.participants %}
-						<option value="{{ participant.pseudo }}">{{ participant.pseudo }}
-							-
-							{{ participant.nom }}
-							{{ participant.prenom }}</option>
-					{% endfor %}
-				</select>
+				<table class="table" size="5">
+					<thead>
+						<tr>
+							<th>Pseudo</th>
+							<th>Nom et prénom</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for participant in sortie.participants %}
+							<tr>
+								<td>{{ participant.pseudo }}</td>
+								<td>{{ participant.nom }}
+									{{ participant.prenom }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			{% else %}
 				<p>Aucun participant inscrit pour le moment.</p>
 			{% endif %}
 		</div>
-		{% for label, messages in app.flashes %}
-			<div class="alert alert-{{ label }}">
-				{% for message in messages %}
-					<p>{{ message }}</p>
-				{% endfor %}
-			</div>
-		{% endfor %}
 
 
 		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
@@ -98,5 +100,4 @@
 			<a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se désister</a>
 		{% endif %}
 	</form>
-
 {% endblock %}
