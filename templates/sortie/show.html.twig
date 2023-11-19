@@ -81,8 +81,10 @@
 						{% for participant in sortie.participants %}
 							<tr>
 								<td>{{ participant.pseudo }}</td>
-								<td>{{ participant.nom }}
-									{{ participant.prenom }}</td>
+								<td>
+									<a href="{{ path('participant.show', {'id': participant.id}) }}">{{ participant.nom }}
+										{{ participant.prenom }}</a>
+								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
@@ -94,10 +96,6 @@
 
 
 		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
-		<a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
 
-		{% if is_granted('ROLE_USER') and sortie.dateHeureDebut > 'now' %}
-			<a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se désister</a>
-		{% endif %}
 	</form>
 {% endblock %}
