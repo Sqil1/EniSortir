@@ -25,4 +25,7 @@ class SearchData
 
     public ?bool $isTermine;
 
+    public ?int $utilisateurInscrit = null;
+
+
 }

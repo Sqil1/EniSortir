@@ -2,7 +2,9 @@
 
 {% block body %}
 
-    {% include 'sorties/filter.html.twig' with {form: form} only%}
+    <div class="container">
+        {% include 'sorties/filter.html.twig' with {form: form} only %}
+    </div>
 
 
     <section class="">
@@ -10,7 +12,7 @@
 
 
         </div>
-        <table class="tab-liste-sortie">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>Nom de la sortie</th>
@@ -25,18 +27,22 @@
             </thead>
             <tbody>
             {% for sortie in sorties %}
-{#                {% if filtreCampus is empty or sortie.campus is null or sortie.campus.id == filtreCampus %}#}
-                    <tr>
-                        <th>{{ sortie.nom }}</th>
-                        <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
-                        <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
-                        <th>0/{{ sortie.nbInscriptionsMax }}</th>
-                        <th>{{ sortie.etat.libelle }}</th>
-                        <th></th>
-                        <th>{{ sortie.organisateur.nom }}</th>
-                        <th></th>
-                    </tr>
-{#                {% endif %}#}
+                <tr>
+                    <th>{{ sortie.nom }}</th>
+                    <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
+                    <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
+                    <th>{{ nombreParticipantsInscrits[sortie.id] }}/{{ sortie.nbInscriptionsMax }}</th>
+                    <th>{{ sortie.etat.libelle }}</th>
+                    <th>
+                        {% for participant in sortie.participants %}
+                            {% if participant.id == searchData.utilisateurInscrit %}
+                                x
+                            {% endif %}
+                        {% endfor %}
+                    </th>
+                    <th>{{ sortie.organisateur.nom }}</th>
+                    <th></th>
+                </tr>
             {% endfor %}
             </tbody>
         </table>

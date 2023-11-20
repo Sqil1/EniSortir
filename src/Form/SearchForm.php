@@ -19,7 +19,7 @@ class SearchForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('s',TextType::class, [
+            ->add('s', TextType::class, [
                 'label' => false,
                 'required' => false,
                 'attr' => [
@@ -54,24 +54,20 @@ class SearchForm extends AbstractType
                 'label' => 'Sorties dont je suis l\'organisateur/trice',
                 'required' => false,
             ])
-
-//            ->add('isInscrit', CheckboxType::class, [
-//                'label' => 'Sorties auquelles je suis inscrit/e',                'required' => false,
-//            ])
-//            ->add('isNotInscrit', CheckboxType::class, [
-//                'label' => 'Sorties auquelles je ne suis pas inscrit/e',
-//                'required' => false,
-//            ])
-//            ->add('isTermine', CheckboxType::class, [
-//                'label' => 'Sorties passées',
-//                'required' => false,
-//            ])
-
+            ->add('isInscrit', CheckboxType::class, [
+                'label' => 'Sorties auquelles je suis inscrit/e',
+                'required' => false,
+            ])
+            ->add('isNotInscrit', CheckboxType::class, [
+                'label' => 'Sorties auquelles je suis ne suis pas inscrit/e',
+                'required' => false,
+            ])
+            ->add('isTermine', CheckboxType::class, [
+                'label' => 'Sorties passées',
+                'required' => false,
+            ])
         ;
     }
-
-
-//configure les options du formulaire
     public function configureOptions(OptionsResolver $resolver)
     {
         //valeurs par defaut
@@ -81,11 +77,8 @@ class SearchForm extends AbstractType
             'csrf_protection' => false
         ]);
     }
-
-    //
     public function getBlockPrefix()
     {
-        return'';
+        return '';
     }
-
 }
