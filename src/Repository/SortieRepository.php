@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Data\SearchData;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -24,6 +26,7 @@ class SortieRepository extends ServiceEntityRepository
 
     /**
      * Récupère toutes les sorties en fonction de la recherche
+     * @param int $idUtilisateurConnecte
      * @return Sortie[]
      */
 
@@ -59,20 +62,20 @@ class SortieRepository extends ServiceEntityRepository
         }
         if (!empty($search->isOrganisateur)) {
             $query = $query
-                ->andWhere('s.organisateur = :isOrganisateur OR s.organisateur IS NULL')
-                ->setParameter('isOrganisateur', $search->organisateur);
+                ->andWhere('s.organisateur = :idUtilisateurConnecte OR s.organisateur IS NULL')
+                ->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
         }
         if (!empty($search->isInscrit) || !empty($search->isNotInscrit)) {
             $participantsConditions = [];
 
             if (!empty($search->isInscrit)) {
-                $participantsConditions[] = ':isInscrit MEMBER OF s.participants';
-                $query = $query->setParameter('isInscrit', $search->inscrit);
+                $participantsConditions[] = ':idUtilisateurConnecte MEMBER OF s.participants';
+                $query = $query->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
             }
 
             if (!empty($search->isNotInscrit)) {
-                $participantsConditions[] = ':isNotInscrit NOT MEMBER OF s.participants';
-                $query = $query->setParameter('isNotInscrit', $search->notInscrit);
+                $participantsConditions[] = ':idUtilisateurConnecte NOT MEMBER OF s.participants';
+                $query = $query->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
             }
             $query = $query->andWhere(implode(' OR ', $participantsConditions));
         }

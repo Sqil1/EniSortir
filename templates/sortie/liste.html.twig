@@ -33,13 +33,7 @@
                     <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
                     <th>{{ nombreParticipantsInscrits[sortie.id] }}/{{ sortie.nbInscriptionsMax }}</th>
                     <th>{{ sortie.etat.libelle }}</th>
-                    <th>
-                        {% for participant in sortie.participants %}
-                            {% if participant.id == searchData.utilisateurInscrit %}
-                                x
-                            {% endif %}
-                        {% endfor %}
-                    </th>
+                    <th>{{ utilisateurConnecte in sortie.participants ? 'x' : '' }}</th>
                     <th>{{ sortie.organisateur.nom }}</th>
                     <th></th>
                 </tr>
