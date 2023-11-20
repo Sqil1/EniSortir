@@ -21,7 +21,7 @@ class Sortie
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "Veuillez renseigner le nom de la sortie")]
-    #[Assert\Length( max: 50,
+    #[Assert\Length(max: 50,
         maxMessage: 'Le nom doit avoir au maximum {{ limit }} caractères'
     )]
     private ?string $nom = null;
@@ -32,7 +32,7 @@ class Sortie
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Veuillez renseigner la durée de la sortie")]
-    #[Assert\Type(type:"integer", message: "Veuillez entrer un nombre")]
+    #[Assert\Type(type: "integer", message: "Veuillez entrer un nombre")]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -41,12 +41,12 @@ class Sortie
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Veuillez renseigner le nombre maximal de participants")]
-    #[Assert\Type(type:"integer", message: "Veuillez entrer un nombre")]
+    #[Assert\Type(type: "integer", message: "Veuillez entrer un nombre")]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "Veuillez renseigner une description de la sortie")]
-    #[Assert\Length( max: 500,
+    #[Assert\Length(max: 500,
         maxMessage: 'Le texte ne doit pas dépasser {{ limit }} caractères'
     )]
     private ?string $infosSortie = null;
@@ -223,13 +223,6 @@ class Sortie
         $this->organisateur = $organisateur;
 
         return $this;
-    }
-    public function getNombreParticipantsInscrits(): int
-    {
-        /** @var Collection $participants */
-        $participants = $this->participants;
-
-        return $participants->count();
     }
 
 }

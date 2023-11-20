@@ -270,7 +270,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
                 $inscription->setOrganisateur(null);
             }
         }
-
         return $this;
     }
 }
