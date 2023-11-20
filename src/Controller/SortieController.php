@@ -34,10 +34,10 @@ class SortieController extends AbstractController
         $sortie->setOrganisateur($organisateur);
         $sortie->setCampus($organisateur->getCampus());
 
-        $sortieForm = $this->createForm( SortieType::class, $sortie );
+        $sortieForm = $this->createForm(SortieType::class, $sortie);
 
-        $sortieForm->get('campus')->setData($organisateur->getCampus()->getNom() );
-        $sortieForm->get('dateLimiteInscription')->setData( new \DateTimeImmutable('+2 days') );
+        $sortieForm->get('campus')->setData($organisateur->getCampus()->getNom());
+        $sortieForm->get('dateLimiteInscription')->setData(new \DateTimeImmutable('+2 days'));
         /*MARCHE PAS :
         $sortieForm->setData([
             'campus' => $organisateur->getCampus()->getNom(),
@@ -46,11 +46,11 @@ class SortieController extends AbstractController
 
         $sortieForm->handleRequest($request);
 
-        if ( $sortieForm->isSubmitted() && $sortieForm->isValid() ) {
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $entityManager->persist($sortie);
             $entityManager->flush();
-            $this->addFlash( 'success', 'La sortie a bien été ajoutée !' );
-            return $this->redirectToRoute( 'home' );
+            $this->addFlash('success', 'La sortie a bien été ajoutée !');
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('sortie/create.html.twig', [
