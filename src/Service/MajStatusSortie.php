@@ -21,6 +21,8 @@ class MajStatusSortie
         $this->updateOuvertesToCloturees();
         $this->updateClotureToEnCours();
         $this->updateEnCoursToPassee();
+        $this->updateOuvertesToClotureess();
+
     }
     private function updateOuvertesToCloturees(): void
     {
@@ -94,5 +96,61 @@ class MajStatusSortie
         }
         $this->entityManager->flush();
     }
+    private function updateOuvertesToClotureess(): void
+    {
+        $ouvertes = $this->entityManager->getRepository(Sortie::class)->findOuvertes();
+        $clotures = $this->entityManager->getRepository(Sortie::class)->findCloture();
+
+        foreach ($ouvertes as $sortie) {
+            // Récupérer le nombre de participants inscrits à la sortie
+            $nombreParticipantsInscrits = count($sortie->getParticipants());
+
+            // Vérifier si le nombre d'inscriptions maximal est atteint
+            if ($nombreParticipantsInscrits >= $sortie->getNbInscriptionsMax()) {
+                // Récupérer l'id de l'état 'Clôturée'
+                $etatClotureId = $this->entityManager->getRepository(Etat::class)
+                    ->findOneBy(['libelle' => 'Clôturée'])->getId();
+
+                // Récupérer la référence de l'état 'Clôturée' avec l'id
+                $etatCloture = $this->entityManager->getReference(Etat::class, $etatClotureId);
+
+                // Mettre à jour l'état de la sortie
+                $sortie->setEtat($etatCloture);
+            } else {
+                // Si le nombre d'inscriptions maximal n'est pas atteint,
+                // vérifier si la date limite d'inscription est toujours valide
+                if ($sortie->getDateLimiteInscription() > new \DateTime()) {
+                    // Récupérer l'id de l'état 'Ouverte'
+                    $etatOuverteId = $this->entityManager->getRepository(Etat::class)
+                        ->findOneBy(['libelle' => 'Ouverte'])->getId();
+
+                    // Récupérer la référence de l'état 'Ouverte' avec l'id
+                    $etatOuverte = $this->entityManager->getReference(Etat::class, $etatOuverteId);
+
+                    // Mettre à jour l'état de la sortie
+                    $sortie->setEtat($etatOuverte);
+                }
+            }
+        }
+
+        // Mettre à jour les sorties clôturées si nécessaire
+        foreach ($clotures as $sortieCloture) {
+            // Vérifier si la date de début de la sortie est future
+            if ($sortieCloture->getDateHeureDebut() > new \DateTime()) {
+                // Récupérer l'id de l'état 'Ouverte'
+                $etatOuverteId = $this->entityManager->getRepository(Etat::class)
+                    ->findOneBy(['libelle' => 'Ouverte'])->getId();
+
+                // Récupérer la référence de l'état 'Ouverte' avec l'id
+                $etatOuverte = $this->entityManager->getReference(Etat::class, $etatOuverteId);
+
+                // Mettre à jour l'état de la sortie
+                $sortieCloture->setEtat($etatOuverte);
+            }
+        }
+
+        $this->entityManager->flush();
+    }
+
 
 }

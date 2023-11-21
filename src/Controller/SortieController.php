@@ -138,7 +138,7 @@ class SortieController extends AbstractController
 
         $now = new \DateTime();
 
-        if ($sortie->getDateHeureDebut() > $now && $sortie->getEtat()->getLibelle() === 'Ouverte') {
+        if ($sortie->getDateHeureDebut() > $now && ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')) {
             $sortie->removeParticipant($participant);
             $manager->flush();
 
@@ -155,4 +155,5 @@ class SortieController extends AbstractController
 
         return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
     }
+
 }
