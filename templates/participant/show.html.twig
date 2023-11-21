@@ -8,6 +8,14 @@
 {% block body %}
 	<h1>{{ participant.pseudo }}</h1>
 	<form method="post" action="{{ path('participant.show', {'id': participant.id}) }}">
+
+		{% if participant.photoFilename %}
+			<img src="{{ asset('uploads/photos/' ~ participant.photoFilename) }}" alt="Photo de profil">
+		{% else %}
+			<p>Aucune photo de profil</p>
+		{% endif %}
+
+
 		<div class="mb-3">
 			<label for="prenom" class="form-label">Prénom</label>
 			<input type="text" class="form-control" id="prenom" name="prenom" value="{{ participant.prenom }}" readonly>
