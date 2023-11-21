@@ -5,14 +5,15 @@ namespace App\Controller;
 use App\Entity\Participant;
 use App\Form\ParticipantType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ParticipantRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ParticipantController extends AbstractController
 {
@@ -57,9 +58,13 @@ class ParticipantController extends AbstractController
 
     #[Route('/participant/show/{id}', name: 'participant.show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function show(Participant $participant): Response
+    public function show(int $id, ParticipantRepository $participantRepository): Response
     {
-        $participant->$this->getUser();
+        $participant = $participantRepository->find($id);
+
+        if (!$participant) {
+            throw $this->createNotFoundException('Participant non trouvé');
+        }
 
         return $this->render('participant/show.html.twig', [
             'participant' => $participant,
