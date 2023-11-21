@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use App\Service\MajStatusSortie;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
@@ -63,11 +64,20 @@ class SortieController extends AbstractController
             'sortieForm' => $sortieForm->createView()
         ]);
     }
-    #[Route('/liste', name: 'liste')]
-    public function liste(SortieRepository $sortieRepository, Request $request, Security $security): Response
-    {
-        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
+    private $majStatusSortie;
+
+    public function __construct(MajStatusSortie $majStatusSortie)
+    {
+        $this->majStatusSortie = $majStatusSortie;
+    }
+    #[Route('/liste', name: 'liste')]
+    public function liste(SortieRepository $sortieRepository, Request $request, Security $security,MajStatusSortie $dateFin): Response
+    {
+        $this->majStatusSortie->updateSortieStates();
+
+
+        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
         $data = new SearchData();
         $form = $this->createForm(SearchForm::class, $data);
