@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Data\SearchData;
 
 use App\Form\SearchForm;

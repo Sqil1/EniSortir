@@ -9,7 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[UniqueEntity(fields: ['email'])]
 #[UniqueEntity(fields: ['pseudo'])]
@@ -31,6 +34,13 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 255)]
     private ?string $motPasse = null;
+
+    #[Vich\UploadableField(mapping: 'participant_upload', fileNameProperty: 'imageName')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $imageName = null;
+
 
     #[ORM\Column(length: 50, unique: true)]
     private ?string $pseudo = null;
@@ -59,6 +69,9 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $inscriptions;
+
+
+
 
     public function __construct()
     {
@@ -156,6 +169,36 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
 
     public function getNom(): ?string
     {
@@ -271,5 +314,13 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
         return $this;
+    }
+    /**
+     * 
+     * 
+     */
+    public function __sleep(): array
+    {
+        return ['id', 'email', 'motPasse', 'pseudo', 'nom', 'prenom', 'telephone', 'administrateur', 'actif'];
     }
 }
