@@ -2,19 +2,21 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
-use App\Form\SortieType;
+use App\Data\SearchData;
 use App\Entity\Participant;
+use App\Entity\Sortie;
+use App\Form\SearchForm;
+use App\Form\SortieType;
 use App\Repository\EtatRepository;
-use App\Repository\SortieRepository;
-use Symfony\Component\Form\FormEvents;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipantRepository;
+use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Security;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
@@ -61,7 +63,28 @@ class SortieController extends AbstractController
             'sortieForm' => $sortieForm->createView()
         ]);
     }
+    #[Route('/liste', name: 'liste')]
+    public function liste(SortieRepository $sortieRepository, Request $request, Security $security): Response
+    {
+        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
+
+        $data = new SearchData();
+        $form = $this->createForm(SearchForm::class, $data);
+        $form->handleRequest($request);
+
+        $utilisateurConnecte = $this->getUser();
+        $data->utilisateurInscrit = $utilisateurConnecte->getId();
+
+        $sorties = $sortieRepository->findSearch($data);
+
+        return $this->render('sortie/liste.html.twig', [
+            'sorties' => $sorties,
+            'form' => $form->createView(),
+            'nombreParticipantsInscrits' => $nombreParticipantsInscrits,
+            'utilisateurConnecte' => $utilisateurConnecte,
+        ]);
+    }
     #[Route('/show/{id}', name: 'detail')]
     public function show(int $id, SortieRepository $sortieRepository): Response
     {
@@ -89,13 +112,13 @@ class SortieController extends AbstractController
             new \DateTime() > $sortie->getDateLimiteInscription() ||
             $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()
         ) {
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('sortie_liste');
         }
 
         $sortie->addParticipant($participant);
 
         $manager->flush();
-        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
     }
 
     #[Route('/desistement/{id}', name: 'desistement')]
@@ -120,6 +143,6 @@ class SortieController extends AbstractController
             );
         }
 
-        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
     }
 }

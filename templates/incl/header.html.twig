@@ -21,19 +21,19 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+                    <a class="nav-link" href="{{ path('sortie_liste') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('home') }}">Mon profil</a>
+{#                    <a class="nav-link" href="{{ path('participant.show', {'id': participant.id}) }}">Mon profil</a>#}
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('home') }}">Se déconnecter</a>
+                    <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('sortie_creer') }}">Créer une sortie</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('liste_sortie') }}">Afficher les listes</a>
+                    <a class="nav-link" href="{{ path('sortie_liste') }}">Afficher les listes</a>
                 </li>
             </ul>
         </div>

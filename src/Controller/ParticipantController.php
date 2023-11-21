@@ -59,6 +59,8 @@ class ParticipantController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function show(Participant $participant): Response
     {
+        $participant->$this->getUser();
+
         return $this->render('participant/show.html.twig', [
             'participant' => $participant,
         ]);
