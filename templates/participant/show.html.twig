@@ -9,8 +9,8 @@
 	<h1>{{ participant.pseudo }}</h1>
 	<form method="post" action="{{ path('participant.show', {'id': participant.id}) }}">
 
-		{% if participant.photoFilename %}
-			<img src="{{ asset('uploads/photos/' ~ participant.photoFilename) }}" alt="Photo de profil">
+		{% if participant.ImageName %}
+			<img src="{{ asset('/images/participant/upload/' ~ participant.imageName) }} " alt="Photo de profil" width="100" height="100">
 		{% else %}
 			<p>Aucune photo de profil</p>
 		{% endif %}
