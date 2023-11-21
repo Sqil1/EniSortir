@@ -82,7 +82,7 @@ class SortieRepository extends ServiceEntityRepository
         if (!empty($search->isTermine)) {
             $query = $query
                 ->andWhere('s.etat = :etatCloture')
-                ->setParameter('etatCloture', 10);
+                ->setParameter('etatCloture', 5);
         }
         return $query->getQuery()->getResult();
     }
