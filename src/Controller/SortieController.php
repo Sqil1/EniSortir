@@ -2,26 +2,30 @@
 
 namespace App\Controller;
 
-use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Entity\Participant;
 use App\Repository\EtatRepository;
-use App\Repository\ParticipantRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\SortieRepository;
 use Symfony\Component\Form\FormEvents;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ParticipantRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
 {
     #[Route('/', name: 'creer')]
-    public function create( Request $request, EntityManagerInterface $entityManager,
-                            ParticipantRepository $participantRepository,
-                            EtatRepository $etatRepository): Response
-    {
+    public function create(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ParticipantRepository $participantRepository,
+        EtatRepository $etatRepository
+    ): Response {
         /*récupération d'un participant et un campus - A RECUPERER AVEC LA SESSION*/
         $organisateur = $participantRepository->find(10);
 
