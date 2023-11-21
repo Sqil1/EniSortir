@@ -6,32 +6,28 @@ use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
-use App\Repository\SortieRepository;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
 {
     #[Route('/', name: 'creer')]
-    public function create(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        ParticipantRepository $participantRepository,
-        EtatRepository $etatRepository
-    ): Response {
+    public function create( Request $request, EntityManagerInterface $entityManager,
+                            ParticipantRepository $participantRepository,
+                            EtatRepository $etatRepository): Response
+    {
         /*récupération d'un participant et un campus - A RECUPERER AVEC LA SESSION*/
-        $organisateur = $participantRepository->find(1);
+        $organisateur = $participantRepository->find(10);
 
         /*l'état est 'Créée' si validation avec 'Enregistrer', sinon il est 'Ouverte'*/
         //decaler la récupération de l'état après handlerequest ?
-        $etat = $etatRepository->find(1);
+        $etat = $etatRepository->find(10);
 
         $sortie = new Sortie();
         $sortie->setEtat($etat);

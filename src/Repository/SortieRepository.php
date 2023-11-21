@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Data\SearchData;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -24,6 +26,7 @@ class SortieRepository extends ServiceEntityRepository
 
     /**
      * Récupère toutes les sorties en fonction de la recherche
+     * @param int $idUtilisateurConnecte
      * @return Sortie[]
      */
 
@@ -31,11 +34,13 @@ class SortieRepository extends ServiceEntityRepository
     {
         $query = $this
             ->createQueryBuilder('s')
-            ->select('c', 's')
-            ->join('s.campus', 'c')
-            ->join('s.organisateur', 'p');
+            ->select('c', 's', 'p', 'e')
+            ->leftjoin('s.campus', 'c')
+            ->leftjoin('s.participants', 'p')
+            ->leftjoin('s.organisateur', 'o')
+            ->leftjoin('s.etat', 'e');
 
-        if (!empty($search->s)){
+        if (!empty($search->s)) {
             $query = $query
                 ->andWhere('s.nom LIKE :q')
                 ->setParameter('q', "%{$search->s}%");
@@ -57,13 +62,43 @@ class SortieRepository extends ServiceEntityRepository
         }
         if (!empty($search->isOrganisateur)) {
             $query = $query
-                ->andWhere('s.organisateur = :isOrganisateur')
-                ->setParameter('isOrganisateur', $search->organisateur);
+                ->andWhere('s.organisateur = :idUtilisateurConnecte OR s.organisateur IS NULL')
+                ->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
         }
+        if (!empty($search->isInscrit) || !empty($search->isNotInscrit)) {
+            $participantsConditions = [];
 
+            if (!empty($search->isInscrit)) {
+                $participantsConditions[] = ':idUtilisateurConnecte MEMBER OF s.participants';
+                $query = $query->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
+            }
+
+            if (!empty($search->isNotInscrit)) {
+                $participantsConditions[] = ':idUtilisateurConnecte NOT MEMBER OF s.participants';
+                $query = $query->setParameter('idUtilisateurConnecte', $search->utilisateurInscrit);
+            }
+            $query = $query->andWhere(implode(' OR ', $participantsConditions));
+        }
+        if (!empty($search->isTermine)) {
+            $query = $query
+                ->andWhere('s.etat = :etatCloture')
+                ->setParameter('etatCloture', 10);
+        }
         return $query->getQuery()->getResult();
     }
+    public function participantsInscritsCounts(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('s.id AS sortie_id', 'COUNT(p) AS nombreParticipantsInscrits')
+            ->leftJoin('s.participants', 'p')
+            ->groupBy('s.id');
 
+        $results = $qb->getQuery()->getResult();
 
-
+        $nombreParticipantsInscrits = [];
+        foreach ($results as $result) {
+            $nombreParticipantsInscrits[$result['sortie_id']] = $result['nombreParticipantsInscrits'];
+        }
+        return $nombreParticipantsInscrits;
+    }
 }

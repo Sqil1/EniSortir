@@ -1,22 +1,24 @@
 {{ form_start(form, {attr: {class: 'filter'}}) }}
 
-<h4>Le nom contient : </h4>
+<h4 class="mt-4">Le nom contient : </h4>
 {{ form_row(form.s) }}
 
-<h4>Campus : </h4>
+<h4 class="mt-4">Campus : </h4>
 {{ form_row(form.campus) }}
 
-<h4>Entre </h4>
+<h4 class="mt-4">Entre </h4>
 {{ form_row(form.dateDebut) }}
 
-<h4>et </h4>
+<h4 class="mt-4">et </h4>
 {{ form_row(form.dateFin) }}
 
+<div class="mt-4">
 {{ form_row(form.isOrganisateur) }}
-{#    {{ form_row(form.isInscrit) }} #}
-{#    {{ form_row(form.isNotInscrit) }} #}
-{#    {{ form_row(form.isTermine) }} #}
+</div>
+    {{ form_row(form.isInscrit) }}
+    {{ form_row(form.isNotInscrit) }}
+    {{ form_row(form.isTermine) }}
 
-<button type="submit">Rechercher</button>
+<button class="btn btn-lg btn-primary" type="submit">Rechercher</button>
 
 {{ form_end(form) }}
