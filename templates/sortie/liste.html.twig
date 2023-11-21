@@ -35,7 +35,17 @@
                     <th>{{ sortie.etat.libelle }}</th>
                     <th>{{ utilisateurConnecte in sortie.participants ? 'x' : '' }}</th>
                     <th>{{ sortie.organisateur.nom }}</th>
-                    <th></th>
+                    <th>
+                        <a href="{{ path('sortie_detail', {'id': sortie.id}) }}" class="btn btn-secondary">Afficher</a>
+                        {% if sortie.dateLimiteInscription > 'now' and sortie.etat.libelle is same as('Ouverte') %}
+                            {% if utilisateurConnecte in sortie.participants %}
+                                <a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se
+                                    désister</a>
+                            {% else %}
+                                <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
+                            {% endif %}
+                        {% endif %}
+                    </th>
                 </tr>
             {% endfor %}
             </tbody>

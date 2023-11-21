@@ -5,14 +5,18 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'main')]
-    public function index(): Response
+    public function index(Security $security): Response
     {
-        return $this->render('main/index.html.twig', [
-            'controller_name' => 'MainController',
-        ]);
+        // Vérifier si l'utilisateur est connecté
+        if ($security->getUser()) {
+            return $this->redirectToRoute('sortie_liste');
+        } else {
+            return $this->redirectToRoute('app_login');
+        }
     }
 }
