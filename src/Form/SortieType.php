@@ -41,12 +41,18 @@ class SortieType extends AbstractType
                 'label' => 'Date et heure de la sortie :',
                 'html5' => true,
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
+                ],
                 'empty_data' => ' '//bon fonctionnement requetes ajax
             ])
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => "Date limite d'inscription :",
                 'html5' => true,
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d'),
+                ],
                 'empty_data' => ' '
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
@@ -72,7 +78,10 @@ class SortieType extends AbstractType
                     return $villeRepository->createQueryBuilder('c')->orderBy('c.nom', 'ASC');
                 }
             ])
-            ->add('lieu', ChoiceType::class, [
+            ->add( 'lieu', EntityType::class, [
+                'class' => Lieu::class,
+                'choice_label' => 'nom',
+                'choices' => [],
                 'placeholder' => "Veuillez choisir une ville",
                 'label' => 'Lieux :'
             ])
@@ -88,12 +97,12 @@ class SortieType extends AbstractType
             ])
             ->add('latitude', TextType::class, [
                 'mapped' => false,
-                'label' => 'Rue :',
+                'label' => 'Latitude :',
                 'disabled' => true
             ])
             ->add('longitude', TextType::class, [
                 'mapped' => false,
-                'label' => 'Rue :',
+                'label' => 'Longitude :',
                 'disabled' => true
             ])
             ->add('enregistrer', SubmitType::class, [
@@ -113,6 +122,25 @@ class SortieType extends AbstractType
                 ],
             ])
         ;
+
+        //*********   DANS LE CAS D'UNE MODIFICATION DE SORTIE, *********************
+        //****   CHARGEMENT DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE   *******
+        $builder->get('ville')->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) {
+                $ville = $event->getForm()->getData();
+                $lieu = ( $ville === null ) ? [] : $ville->getLieux();
+                $form = $event->getForm()->getParent();
+                $form->add( 'lieu', EntityType::class, [
+                    'class' => Lieu::class,
+                    'choices' => $lieu,
+                    'choice_label' => 'nom',
+                    'placeholder' => "Veuillez choisir un lieu",
+                    'label' => 'Lieux :'
+                ]);
+            }
+        );
+        //****************************************************************************
 
         //**RECUPERATION DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE CHOISIE****
 
@@ -134,7 +162,6 @@ class SortieType extends AbstractType
                 $formModifier( $event->getForm()->getParent(), $ville );
             }
         );
-
         //****************************************************************************
 
     }
