@@ -38,7 +38,8 @@ class SortieRepository extends ServiceEntityRepository
             ->leftjoin('s.campus', 'c')
             ->leftjoin('s.participants', 'p')
             ->leftjoin('s.organisateur', 'o')
-            ->leftjoin('s.etat', 'e');
+            ->leftjoin('s.etat', 'e')
+            ->orderBy('s.dateHeureDebut', 'DESC');
 
         if (!empty($search->s)) {
             $query = $query
@@ -100,5 +101,34 @@ class SortieRepository extends ServiceEntityRepository
             $nombreParticipantsInscrits[$result['sortie_id']] = $result['nombreParticipantsInscrits'];
         }
         return $nombreParticipantsInscrits;
+    }
+    // Dans votre EtatRepository
+
+    public function findOuvertes(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->leftJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etatOuverte')
+            ->setParameter('etatOuverte', 'Ouverte');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function findCloture(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->leftJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etatOuverte')
+            ->setParameter('etatOuverte', 'Clôturée');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function findEnCours(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->leftJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etatEnCours')
+            ->setParameter('etatEnCours', 'Activité en cours');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
