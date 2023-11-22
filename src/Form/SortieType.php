@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,13 +32,16 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom :'
+                'label' => 'Nom :',
+                'attr' => [
+                    'autofocus' => 'autofocus'
+                ]
             ])
             ->add('dateHeureDebut', DateTimeType::class, [
                 'label' => 'Date et heure de la sortie :',
                 'html5' => true,
                 'widget' => 'single_text',
-                'empty_data' => ' '
+                'empty_data' => ' '//bon fonctionnement requetes ajax
             ])
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => "Date limite d'inscription :",
@@ -92,7 +96,25 @@ class SortieType extends AbstractType
                 'label' => 'Rue :',
                 'disabled' => true
             ])
+            ->add('enregistrer', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => [
+                    'class' => 'btn btn-success',
+                    'style' => 'width: 180px',
+                    'formnovalidate' => 'formnovalidate'
+                ]
+            ])
+            ->add('publier', SubmitType::class, [
+                'label' => 'Publier',
+                'attr' => [
+                    'class' => 'btn btn-success',
+                    'style' => 'width: 180px',
+                    'formnovalidate' => 'formnovalidate'
+                ],
+            ])
         ;
+
+        //**RECUPERATION DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE CHOISIE****
 
         $formModifier = function(FormInterface $form, Ville $ville = null) {
             $lieu = ( $ville === null ) ? [] : $ville->getLieux();
@@ -112,6 +134,8 @@ class SortieType extends AbstractType
                 $formModifier( $event->getForm()->getParent(), $ville );
             }
         );
+
+        //****************************************************************************
 
     }
 

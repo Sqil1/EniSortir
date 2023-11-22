@@ -10,9 +10,9 @@
 
         {{ form_start(sortieForm) }}
 
-        <div class="row mt-3">
+        <div class="row mt-3 justify-content-center">
 
-            <div class="col-4 mx-auto">
+            <div class="col-4 mx-5">
                 {{ form_row(sortieForm.nom) }}
                 {{ form_row(sortieForm.dateHeureDebut) }}
                 {{ form_row(sortieForm.dateLimiteInscription) }}
@@ -21,7 +21,7 @@
                 {{ form_row(sortieForm.infosSortie) }}
            </div>
 
-            <div class="col-4 mx-auto">
+            <div class="col-4 mx-5">
                 {{ form_row(sortieForm.campus) }}
                 {{ form_row(sortieForm.ville) }}
                 {{ form_row(sortieForm.lieu) }}
@@ -33,60 +33,18 @@
 
         </div>
 
-        <div class="col-4 mx-auto my-3">
-            <button type="submit" class="btn btn-primary w-25" formnovalidate>Enregistrer</button>
+        <div class="row col-5 mx-auto my-3">
+            <div class="col-4">{{ form_row(sortieForm.enregistrer) }}</div>
+            <div class="col-4">{{ form_row(sortieForm.publier) }}</div>
+            <div class="col-4">
+                <input type="button" class="btn btn-danger" value="Annuler" id="boutonAnnuler" style="width: 180px">
+            </div>
         </div>
 
         {{ form_end(sortieForm) }}
 
     </div>
 
-{% endblock %}
-
-{% block javascript %}
-
-    <script>
-
-        window.onload = () => {
-            //chargement de la liste des lieux lors du choix d'une ville
-            let ville =document.querySelector("#sortie_ville");
-            ville.addEventListener("change", function(){
-                let form = this.closest("form");
-                let data = this.name + "=" + this.value;
-                fetch( form.action, {
-                    method: form.getAttribute("method"),
-                    body: data,
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded;" +
-                        "charset: utf-8"
-                    }
-                })
-                .then(response => response.text())
-                .then(html => {
-                    let content = document.createElement("html");
-                    content.innerHTML = html;
-                    let nouveauSelect = content.querySelector("#sortie_lieu");
-                    document.querySelector("#sortie_lieu").replaceWith(nouveauSelect);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-            });
-
-                //chargement des propriétés du lieu choisi par l'utilisateur
-                let lieu = document.querySelector("#s");
-                lieu.addEventListener("change", function(){
-                fetch( "https://127.0.0.1:8000/sortie/", {
-
-            })
-                .then()
-                .catch(error => {
-                console.log(error);
-            })
-            });
-
-        }
-
-    </script>
+    <script src="{{ asset('js/scriptsCreateSortie.js') }}"></script>
 
 {% endblock %}
