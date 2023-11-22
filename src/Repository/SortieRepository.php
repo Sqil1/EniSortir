@@ -36,9 +36,11 @@ class SortieRepository extends ServiceEntityRepository
             ->createQueryBuilder('s')
             ->select('c', 's', 'p', 'e')
             ->join('s.campus', 'c')
-            ->join('s.participants', 'p')
-            ->join('s.organisateur', 'o')
+            ->leftJoin('s.participants', 'p')
+            ->leftJoin('s.organisateur', 'o')
             ->join('s.etat', 'e')
+            ->where('e.libelle != :etatHistorisee')
+            ->setParameter('etatHistorisee', 'Historisée')
             ->orderBy('s.dateHeureDebut', 'DESC');
 
         if (!empty($search->s)) {
@@ -102,30 +104,12 @@ class SortieRepository extends ServiceEntityRepository
         }
         return $nombreParticipantsInscrits;
     }
-    public function findOuvertes(): array
+    public function findByEtat(string $etatLibelle): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatOuverte')
-            ->setParameter('etatOuverte', 'Ouverte');
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-    public function findCloture(): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatOuverte')
-            ->setParameter('etatOuverte', 'Clôturée');
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-    public function findEnCours(): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatEnCours')
-            ->setParameter('etatEnCours', 'Activité en cours');
+            ->Join('s.etat', 'e')
+            ->andWhere('e.libelle = :etatLibelle')
+            ->setParameter('etatLibelle', $etatLibelle);
 
         return $queryBuilder->getQuery()->getResult();
     }

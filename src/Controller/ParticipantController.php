@@ -56,17 +56,14 @@ class ParticipantController extends AbstractController
     }
 
 
-    #[Route('/participant/show/{id}', name: 'participant.show', methods: ['GET'])]
+    #[Route('/participant/show', name: 'participant.show')]
     /**
      * @IsGranted({"ROLE_ADMIN", "ROLE_USER"})
      */
-    public function show(int $id, ParticipantRepository $participantRepository): Response
+    public function show(ParticipantRepository $participantRepository): Response
     {
-        $participant = $participantRepository->find($id);
-
-        if (!$participant) {
-            throw $this->createNotFoundException('Participant non trouvé');
-        }
+        $utilisateurConnecte = $this->getUser();
+        $participant = $participantRepository->find($utilisateurConnecte->getId());
 
         return $this->render('participant/show.html.twig', [
             'participant' => $participant,

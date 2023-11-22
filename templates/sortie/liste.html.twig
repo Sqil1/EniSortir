@@ -29,7 +29,7 @@
                         <th>{{ sortie.nom }}</th>
                         <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
                         <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
-                        <th>{{ nombreParticipantsInscrits[sortie.id] }}/{{ sortie.nbInscriptionsMax }}</th>
+                        <th>{{ nombreParticipantsInscrits is not null ? nombreParticipantsInscrits[sortie.id] : 0  }}/{{ sortie.nbInscriptionsMax }}</th>
                         <th>{{ sortie.etat.libelle }}</th>
                         <th>{{ utilisateurConnecte in sortie.participants ? 'x' : '' }}</th>
                         <th>{{ sortie.organisateur.nom }}</th>
