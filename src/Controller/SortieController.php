@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use App\Service\MajStatusSortie;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
@@ -69,6 +70,13 @@ class SortieController extends AbstractController
         ]);
     }
 
+    private $majStatusSortie;
+
+    public function __construct(MajStatusSortie $majStatusSortie)
+    {
+        $this->majStatusSortie = $majStatusSortie;
+    }
+
 
     //utilisée par une requête ajax dans create.html.twig
     #[Route( '/updateLieu', name: 'updateLieu', methods: ['GET'] )]
@@ -88,10 +96,12 @@ class SortieController extends AbstractController
     }
 
     #[Route('/liste', name: 'liste')]
-    public function liste(SortieRepository $sortieRepository, Request $request, Security $security): Response
+    public function liste(SortieRepository $sortieRepository, Request $request, Security $security,MajStatusSortie $dateFin): Response
     {
-        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
+        $this->majStatusSortie->updateSortieStates();
 
+
+        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
         $data = new SearchData();
         $form = $this->createForm(SearchForm::class, $data);
@@ -162,7 +172,7 @@ class SortieController extends AbstractController
 
         $now = new \DateTime();
 
-        if ($sortie->getDateHeureDebut() > $now && $sortie->getEtat()->getLibelle() === 'Ouverte') {
+        if ($sortie->getDateHeureDebut() > $now && ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')) {
             $sortie->removeParticipant($participant);
             $manager->flush();
 
