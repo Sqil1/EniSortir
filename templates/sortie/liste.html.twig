@@ -2,10 +2,17 @@
 
 {% block body %}
 
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert-{{ label }} alert alert-success my-2" role="alert" style="text-align: center">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="container">
         {% include 'sorties/filter.html.twig' with {form: form} only %}
     </div>
-
 
     <section class="">
         <div class="container-filtre">
@@ -37,13 +44,21 @@
                     <th>{{ sortie.organisateur.nom }}</th>
                     <th>
                         <a href="{{ path('sortie_detail', {'id': sortie.id}) }}" class="btn btn-secondary">Afficher</a>
-                        {% if sortie.dateLimiteInscription > 'now' and sortie.etat.libelle is same as('Ouverte') %}
-                            {% if utilisateurConnecte in sortie.participants %}
-                                <a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se
-                                    désister</a>
-                            {% else %}
-                                <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
+                        {% if sortie.dateLimiteInscription > 'now' %}
+
+                            {% if sortie.etat.libelle is same as('Ouverte') %}
+                                {% if utilisateurConnecte in sortie.participants %}
+                                    <a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se
+                                        désister</a>
+                                {% else %}
+                                    <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
+                                {% endif %}
                             {% endif %}
+
+                            {% if sortie.etat.libelle is same as('Créée') and utilisateurConnecte is same as sortie.organisateur %}
+                                <a href="{{ path('sortie_modifier', {'id': sortie.id}) }}" class="btn btn-primary">Modifier</a>
+                            {% endif %}
+
                         {% endif %}
                     </th>
                 </tr>
