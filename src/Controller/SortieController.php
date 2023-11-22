@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use App\Service\MajStatusSortie;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
@@ -69,6 +70,13 @@ class SortieController extends AbstractController
             'sortieForm' => $sortieForm->createView(),
             'methode' => 0
         ]);
+    }
+
+    private $majStatusSortie;
+
+    public function __construct(MajStatusSortie $majStatusSortie)
+    {
+        $this->majStatusSortie = $majStatusSortie;
     }
 
 
@@ -133,11 +141,12 @@ class SortieController extends AbstractController
 
 
     #[Route('/liste', name: 'liste')]
-    public function liste(SortieRepository $sortieRepository, Request $request, Security $security,
-                            ParticipantRepository $participantRepository): Response
+    public function liste(SortieRepository $sortieRepository, Request $request, Security $security,MajStatusSortie $dateFin): Response
     {
-        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
+        $this->majStatusSortie->updateSortieStates();
 
+
+        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
         $data = new SearchData();
         $form = $this->createForm(SearchForm::class, $data);
@@ -148,11 +157,21 @@ class SortieController extends AbstractController
 
         $sorties = $sortieRepository->findSearch($data);
 
+        // pour filtrer les sorties qui ne sont pas réalisées depuis plus d'un mois
+        $sorties = array_filter($sorties, function ($sortie) {
+            // Date limite = DateHeureDebut + 1 mois
+            $dateLimite = clone $sortie->getDateHeureDebut();
+            $dateLimite->modify('+1 month');
+
+            return $dateLimite > new \DateTime();
+        });
+
+
         return $this->render('sortie/liste.html.twig', [
             'sorties' => $sorties,
             'form' => $form->createView(),
             'nombreParticipantsInscrits' => $nombreParticipantsInscrits,
-            'utilisateurConnecte' => $utilisateurConnecte
+            'utilisateurConnecte' => $utilisateurConnecte,
         ]);
     }
     #[Route('/show/{id}', name: 'detail')]
@@ -198,7 +217,7 @@ class SortieController extends AbstractController
 
         $now = new \DateTime();
 
-        if ($sortie->getDateHeureDebut() > $now && $sortie->getEtat()->getLibelle() === 'Ouverte') {
+        if ($sortie->getDateHeureDebut() > $now && ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')) {
             $sortie->removeParticipant($participant);
             $manager->flush();
 
