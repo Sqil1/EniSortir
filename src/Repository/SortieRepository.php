@@ -35,10 +35,10 @@ class SortieRepository extends ServiceEntityRepository
         $query = $this
             ->createQueryBuilder('s')
             ->select('c', 's', 'p', 'e')
-            ->leftjoin('s.campus', 'c')
-            ->leftjoin('s.participants', 'p')
-            ->leftjoin('s.organisateur', 'o')
-            ->leftjoin('s.etat', 'e')
+            ->join('s.campus', 'c')
+            ->join('s.participants', 'p')
+            ->join('s.organisateur', 'o')
+            ->join('s.etat', 'e')
             ->orderBy('s.dateHeureDebut', 'DESC');
 
         if (!empty($search->s)) {
@@ -102,8 +102,6 @@ class SortieRepository extends ServiceEntityRepository
         }
         return $nombreParticipantsInscrits;
     }
-    // Dans votre EtatRepository
-
     public function findOuvertes(): array
     {
         $queryBuilder = $this->createQueryBuilder('s')

@@ -121,7 +121,6 @@ class SortieController extends AbstractController
             return $dateLimite > new \DateTime();
         });
 
-
         return $this->render('sortie/liste.html.twig', [
             'sorties' => $sorties,
             'form' => $form->createView(),

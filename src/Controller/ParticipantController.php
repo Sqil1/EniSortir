@@ -57,7 +57,9 @@ class ParticipantController extends AbstractController
 
 
     #[Route('/participant/show/{id}', name: 'participant.show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    /**
+     * @IsGranted({"ROLE_ADMIN", "ROLE_USER"})
+     */
     public function show(int $id, ParticipantRepository $participantRepository): Response
     {
         $participant = $participantRepository->find($id);
