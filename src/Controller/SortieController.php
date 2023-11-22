@@ -145,7 +145,6 @@ class SortieController extends AbstractController
     {
         $this->majStatusSortie->updateSortieStates();
 
-
         $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
         $data = new SearchData();
@@ -156,16 +155,6 @@ class SortieController extends AbstractController
         $data->utilisateurInscrit = $utilisateurConnecte->getId();
 
         $sorties = $sortieRepository->findSearch($data);
-
-        // pour filtrer les sorties qui ne sont pas réalisées depuis plus d'un mois
-        $sorties = array_filter($sorties, function ($sortie) {
-            // Date limite = DateHeureDebut + 1 mois
-            $dateLimite = clone $sortie->getDateHeureDebut();
-            $dateLimite->modify('+1 month');
-
-            return $dateLimite > new \DateTime();
-        });
-
 
         return $this->render('sortie/liste.html.twig', [
             'sorties' => $sorties,

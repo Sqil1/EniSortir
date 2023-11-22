@@ -37,7 +37,7 @@ class AppFixtures extends Fixture
         }
 
         // Etat
-        $etatNames = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'passée', 'Annulé'];
+        $etatNames = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'passée', 'Annulée', 'Historisée'];
 
         foreach ($etatNames as $i => $etatName) {
             $etat = new Etat();

@@ -35,10 +35,12 @@ class SortieRepository extends ServiceEntityRepository
         $query = $this
             ->createQueryBuilder('s')
             ->select('c', 's', 'p', 'e')
-            ->leftjoin('s.campus', 'c')
-            ->leftjoin('s.participants', 'p')
-            ->leftjoin('s.organisateur', 'o')
-            ->leftjoin('s.etat', 'e')
+            ->join('s.campus', 'c')
+            ->leftJoin('s.participants', 'p')
+            ->leftJoin('s.organisateur', 'o')
+            ->join('s.etat', 'e')
+            ->where('e.libelle != :etatHistorisee')
+            ->setParameter('etatHistorisee', 'Historisée')
             ->orderBy('s.dateHeureDebut', 'DESC');
 
         if (!empty($search->s)) {
@@ -102,32 +104,12 @@ class SortieRepository extends ServiceEntityRepository
         }
         return $nombreParticipantsInscrits;
     }
-    // Dans votre EtatRepository
-
-    public function findOuvertes(): array
+    public function findByEtat(string $etatLibelle): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatOuverte')
-            ->setParameter('etatOuverte', 'Ouverte');
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-    public function findCloture(): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatOuverte')
-            ->setParameter('etatOuverte', 'Clôturée');
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-    public function findEnCours(): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->andWhere('e.libelle = :etatEnCours')
-            ->setParameter('etatEnCours', 'Activité en cours');
+            ->Join('s.etat', 'e')
+            ->andWhere('e.libelle = :etatLibelle')
+            ->setParameter('etatLibelle', $etatLibelle);
 
         return $queryBuilder->getQuery()->getResult();
     }
