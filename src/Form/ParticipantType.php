@@ -5,19 +5,21 @@ namespace App\Form;
 use App\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Validator\Constraints\File;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 
 
@@ -31,7 +33,7 @@ class ParticipantType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Nom',
+                'label' => 'Nom:',
                 'label_attr' => [
                     'class' => 'form-label mt-4',
                 ],
@@ -48,7 +50,7 @@ class ParticipantType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Prénom',
+                'label' => 'Prénom:',
                 'label_attr' => [
                     'class' => 'form-label mt-4',
                 ],
@@ -68,7 +70,7 @@ class ParticipantType extends AbstractType
                     'maxlength' => 50,
                 ],
                 'required' => false,
-                'label' => 'Pseudo (Facultatif)',
+                'label' => 'Pseudo:',
                 'label_attr' => [
                     'class' => 'form-label mt-4',
                 ],
@@ -85,7 +87,7 @@ class ParticipantType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Email',
+                'label' => 'Email:',
                 'label_attr' => [
                     'class' => 'form-label mt-4',
                 ],
@@ -96,33 +98,34 @@ class ParticipantType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('MotPasse', RepeatedType::class, [
+            ->add('motPasse', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les champs du mot de passe doivent correspondre.',
+                'label' => 'Mot de passe:',
                 'options' => [
                     'attr' => [
                         'class' => 'form-control',
                     ],
-                    'label' => 'Mot de passe',
-                    'label_attr' => [
-                        'class' => 'form-label mt-4',
-                    ],
+                    'label' => false,
+
                 ],
                 'required' => false,
-                'first_options'  => ['label' => 'Nouveau mot de passe'],
-                'second_options' => ['label' => 'Confirmer le mot de passe'],
+                'first_options'  => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Confirmation'],
                 'constraints' => [
                     new Assert\Length([
                         'min' => 6,
                         'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
                     ]),
+
                 ],
             ])
+
             ->add('telephone', TelType::class, [
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Téléphone',
+                'label' => 'Téléphone:',
                 'label_attr' => [
                     'class' => 'form-label mt-4',
                 ],
@@ -135,24 +138,34 @@ class ParticipantType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('imageFile', VichImageType::class, [
-                'label' => 'Photo de profil',
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/*',
-                        ],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide.',
-                    ])
+            ->add('campus', EntityType::class, [
+                'class' => \App\Entity\Campus::class,
+                'label' => 'Campus:',
+                'attr' => [
+                    'class' => 'form-control',
                 ],
+                'required' => true,
+                'placeholder' => 'Sélectionnez votre campus',
             ])
+
             ->add('submit', SubmitType::class, [
                 'attr' => [
                     'class' => 'btn btn-primary mt-4',
-                    'label' => 'Annuler'
-                ]
+
+                    'style' => 'width: 180px',
+
+                ],
+                'label' => 'Enregistrer',
+            ])
+            ->add('cancel', ButtonType::class, [
+                'attr' => [
+                    'class' => 'btn btn-secondary mt-4',
+
+                    'style' => 'width: 180px',
+                ],
+                'label' => 'Annuler',
+
+
             ]);
     }
 

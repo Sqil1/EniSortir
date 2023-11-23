@@ -5,14 +5,86 @@
 
 {% block body %}
 	<div class="container">
-		<h1 class="mt-4">Mon profil</h1>
+		<h1 class="display-5 my-3 text-center">Mon profil</h1>
 		{% for message in app.flashes('success') %}
 			<div class="alert alert-success mt-4">
 				{{ message }}
 			</div>
 		{% endfor %}
+		<div class="row">
+			<div class="col-md-4">
+				{% if form.vars.data.imageName is defined %}
+					<img src="{{ asset('/images/participant/upload/' ~ form.vars.data.imageName) }}" alt="Photo de profil" width="200" height="200">
+				{% endif %}
+			</div>
 
-		{{form(form)}}
-			<a href="{{ path("home") }}" class="btn btn-secondary">Annuler</a>
+			<div class="col-md-8 ml-md-0 mx-auto" style="max-width: 600px;">
+				{{ form_start(form) }}
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.pseudo, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.prenom, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.nom, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.telephone, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.email, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.motPasse, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-8">
+						{{ form_widget(form.motPasse, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					{{ form_label(form.campus, null, {'label_attr': {'class': 'col-sm-12 col-md-4 col-form-label'}}) }}
+					<div class="col-sm-12 col-md-6">
+						{{ form_widget(form.campus, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+				<div class="form-group row mb-2">
+					<div class="col-sm-12">
+						<div class="row">
+							<div class="col">
+								{{ form_row(form.submit) }}
+							</div>
+							<div class="col">
+								{{ form_row(form.cancel) }}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{{ form_end(form) }}
+			</div>
 		</div>
-	{% endblock %}
+	</div>
+{% endblock %}
