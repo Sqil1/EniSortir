@@ -19,7 +19,7 @@ class ParticipantController extends AbstractController
 {
     #[Route('/participant/edit/{id}', name: 'participant.edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function edit(Participant $participant, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, ParticipantRepository $participantRepository, int $id): Response
+    public function edit(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, ParticipantRepository $participantRepository, int $id): Response
     {
         $participant = $participantRepository->find($id);
         $campusNames = ['SAINT-HERBLAIN', 'CHARTRES DE BRETAGNE', 'LA ROCHE SUR YON'];
