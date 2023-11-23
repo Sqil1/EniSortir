@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use App\Service\MajStatusSortie;
 
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
@@ -45,15 +46,16 @@ class SortieController extends AbstractController
         if ( $sortieForm->isSubmitted() && $sortieForm->isValid() ) {
 
             //L'état est 'Créée' si validation avec 'Enregistrer', sinon il est 'Ouverte'
-            $etatCréée = $etatRepository->findOneBy([ "libelle" => "Créée" ]);
+            $etatCreee = $etatRepository->findOneBy([ "libelle" => "Créée" ]);
             $etatOuverte = $etatRepository->findOneBy([ "libelle" => "Ouverte" ]);
             if ( $sortieForm->get('enregistrer')->isClicked() ) {
-                $sortie->setEtat($etatCréée);
+                $sortie->setEtat($etatCreee);
             } elseif ( $sortieForm->get('publier')->isClicked() ) {
                 $sortie->setEtat($etatOuverte);
             } else {
                 return $this->render('sortie/create.html.twig', [
-                    'sortieForm' => $sortieForm->createView()
+                    'sortieForm' => $sortieForm->createView(),
+                    'methode' => 0
                 ]);
             }
 
@@ -61,12 +63,20 @@ class SortieController extends AbstractController
             $entityManager->persist($sortie);
             $entityManager->flush();
             $this->addFlash( 'success', 'La sortie a bien été ajoutée !' );
-            return $this->redirectToRoute( 'home' );
+            return $this->redirectToRoute( 'sortie_liste' );
         }
 
         return $this->render('sortie/create.html.twig', [
-            'sortieForm' => $sortieForm->createView()
+            'sortieForm' => $sortieForm->createView(),
+            'methode' => 0
         ]);
+    }
+
+    private $majStatusSortie;
+
+    public function __construct(MajStatusSortie $majStatusSortie)
+    {
+        $this->majStatusSortie = $majStatusSortie;
     }
 
 
@@ -87,11 +97,55 @@ class SortieController extends AbstractController
 
     }
 
-    #[Route('/liste', name: 'liste')]
-    public function liste(SortieRepository $sortieRepository, Request $request, Security $security): Response
-    {
-        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
+    #[Route( '/modifier/{id}', name: 'modifier', requirements:['id' => '\d+'] )]
+    public function modifierSortie( Request $request, SortieRepository $sortieRepository, Sortie $sortie,
+                            EtatRepository $etatRepository, EntityManagerInterface $entityManager ) : Response {
+
+        $sortieForm = $this->createForm( SortieType::class, $sortie );
+        $sortieForm->get('ville')->setData( $sortie->getLieu()->getVille() );
+        $sortieForm->get('rue')->setData( $sortie->getLieu()->getRue() );
+        $sortieForm->get('codePostal')->setData( $sortie->getLieu()->getVille()->getCodePostal());
+        $sortieForm->get('latitude')->setData( $sortie->getLieu()->getLatitude() );
+        $sortieForm->get('longitude')->setData( $sortie->getLieu()->getLongitude());
+
+        $sortieForm->handleRequest($request);
+
+        if ( $sortieForm->isSubmitted() && $sortieForm->isValid() ) {
+
+            //L'état est 'Créée' si validation avec 'Enregistrer', sinon il est 'Ouverte'
+            $etatCreee = $etatRepository->findOneBy([ "libelle" => "Créée" ]);
+            $etatOuverte = $etatRepository->findOneBy([ "libelle" => "Ouverte" ]);
+            if ( $sortieForm->get('enregistrer')->isClicked() ) {
+                $sortie->setEtat($etatCreee);
+            } elseif ( $sortieForm->get('publier')->isClicked() ) {
+                $sortie->setEtat($etatOuverte);
+            } else {
+                return $this->render('sortie/create.html.twig', [
+                    'sortieForm' => $sortieForm->createView(),
+                    'methode' => 1
+                ]);
+            }
+
+            //Sauvegarde de la sortie modifiée
+            $entityManager->flush();
+            $this->addFlash( 'success', 'La sortie a bien été modifiée !' );
+            return $this->redirectToRoute( 'sortie_liste' );
+        }
+
+        return $this->render('sortie/create.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+            'methode' => 1
+        ]);
+    }
+
+
+    #[Route('/liste', name: 'liste')]
+    public function liste(SortieRepository $sortieRepository, Request $request, Security $security,MajStatusSortie $dateFin): Response
+    {
+        $this->majStatusSortie->updateSortieStates();
+
+        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
 
         $data = new SearchData();
         $form = $this->createForm(SearchForm::class, $data);
@@ -101,16 +155,6 @@ class SortieController extends AbstractController
         $data->utilisateurInscrit = $utilisateurConnecte->getId();
 
         $sorties = $sortieRepository->findSearch($data);
-
-        // pour filtrer les sorties qui ne sont pas réalisées depuis plus d'un mois
-        $sorties = array_filter($sorties, function ($sortie) {
-            // Date limite = DateHeureDebut + 1 mois
-            $dateLimite = clone $sortie->getDateHeureDebut();
-            $dateLimite->modify('+1 month');
-
-            return $dateLimite > new \DateTime();
-        });
-
 
         return $this->render('sortie/liste.html.twig', [
             'sorties' => $sorties,
@@ -162,7 +206,7 @@ class SortieController extends AbstractController
 
         $now = new \DateTime();
 
-        if ($sortie->getDateHeureDebut() > $now && $sortie->getEtat()->getLibelle() === 'Ouverte') {
+        if ($sortie->getDateHeureDebut() > $now && ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')) {
             $sortie->removeParticipant($participant);
             $manager->flush();
 

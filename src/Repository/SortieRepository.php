@@ -35,10 +35,13 @@ class SortieRepository extends ServiceEntityRepository
         $query = $this
             ->createQueryBuilder('s')
             ->select('c', 's', 'p', 'e')
-            ->leftjoin('s.campus', 'c')
-            ->leftjoin('s.participants', 'p')
-            ->leftjoin('s.organisateur', 'o')
-            ->leftjoin('s.etat', 'e');
+            ->join('s.campus', 'c')
+            ->leftJoin('s.participants', 'p')
+            ->leftJoin('s.organisateur', 'o')
+            ->join('s.etat', 'e')
+            ->where('e.libelle != :etatHistorisee')
+            ->setParameter('etatHistorisee', 'Historisée')
+            ->orderBy('s.dateHeureDebut', 'DESC');
 
         if (!empty($search->s)) {
             $query = $query
@@ -100,5 +103,14 @@ class SortieRepository extends ServiceEntityRepository
             $nombreParticipantsInscrits[$result['sortie_id']] = $result['nombreParticipantsInscrits'];
         }
         return $nombreParticipantsInscrits;
+    }
+    public function findByEtat(string $etatLibelle): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->Join('s.etat', 'e')
+            ->andWhere('e.libelle = :etatLibelle')
+            ->setParameter('etatLibelle', $etatLibelle);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

@@ -1,0 +1,35 @@
+<div class="">
+
+    {{ form_start(form, {attr: {class: 'filter'}}) }}
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-4">
+        <div class="col-lg-3 col-md-8 col-sm-12">
+            <h4 class="">Le nom contient :</h4>
+            {{ form_row(form.s) }}
+
+            <h4 class="mt-4">Campus :</h4>
+            {{ form_row(form.campus) }}
+
+            <h4 class="mt-4">Entre :</h4>
+            {{ form_row(form.dateDebut) }}
+
+            <h4 class="mt-4">et :</h4>
+            {{ form_row(form.dateFin) }}
+        </div>
+        <div class="col-lg-3 col-md-8 col-sm-12">
+            <h4>Options :</h4>
+            {{ form_row(form.isOrganisateur) }}
+            {{ form_row(form.isInscrit) }}
+            {{ form_row(form.isNotInscrit) }}
+            {{ form_row(form.isTermine) }}
+        </div>
+
+        <div class="col-lg-3 col-md-12 col-sm-12">
+            <button class="btn btn-lg btn-primary btn-block mt-4" type="submit" style="font-size: 2rem;">Rechercher</button>
+        </div>
+
+    </div>
+
+    {{ form_end(form) }}
+
+</div>
+

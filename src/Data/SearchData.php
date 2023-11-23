@@ -7,7 +7,6 @@ use App\Entity\Sortie;
 
 class SearchData
 {
-
     public ?string $s = '';
 
     //objet campus

@@ -1,10 +1,21 @@
 window.onload = () => {
 
-    //********   chargement de la liste des lieux lors du choix d'une ville   ***********
+    //********   la date limite d'inscription doit être antérieure à la date de sortie   **********
+    let dateSortie = document.getElementById("sortie_dateHeureDebut");
+    let dateLimiteInscription = document.getElementById("sortie_dateLimiteInscription");
+    dateSortie.addEventListener( "change", function() {
+        let dateSortieValue = new Date(dateSortie.value);
+        dateLimiteInscription.max = dateSortieValue.toISOString().split('T')[0];
+    });
+    //*********************************************************************************************
+
+
+    //*************   chargement de la liste des lieux lors du choix d'une ville   ****************
     let ville =document.querySelector("#sortie_ville");
     ville.addEventListener("change", function(){
         let form = this.closest("form");
         let data = this.name + "=" + this.value;
+        console.log((2));
         fetch( form.action, {
             method: form.getAttribute("method"),
             body: data,
@@ -31,7 +42,7 @@ window.onload = () => {
     //*********************************************************************************************
 
 
-    //***********  chargement de l'adrese du lieu choisi  ****************************************
+    //***********  chargement de l'adresse du lieu choisi  ****************************************
     document.querySelector("#sortie_lieu").addEventListener("change", function(){
         let lieuId = document.querySelector("#sortie_lieu").value;
         //baseUrl se trouve dans le fichier base.html.twig
@@ -59,7 +70,7 @@ window.onload = () => {
     //*********************  clic sur le bouton annuler  ******************************************
     document.getElementById("boutonAnnuler").addEventListener("click", function() {
         //baseUrl se trouve dans le fichier base.html.twig
-        window.location.href = baseUrl + "/home";
+        window.location.href = baseUrl + "/sortie/liste";
     });
     //*********************************************************************************************
 
