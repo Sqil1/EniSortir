@@ -182,18 +182,22 @@ class SortieController extends AbstractController
         if (!$participant) {
             return $this->redirectToRoute('app_login');
         }
-
+        $dateCourante = \DateTime::createFromFormat('d/m/Y', (new \DateTime())->format('d/m/Y'));
         $etatOuverte = $etat->findOneBy(['libelle' => 'Ouverte']);
         if (
             !$etatOuverte ||
             $sortie->getEtat() !== $etatOuverte ||
-            new \DateTime() > $sortie->getDateLimiteInscription() ||
+            $dateCourante < $sortie->getDateLimiteInscription() ||
             $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()
         ) {
             return $this->redirectToRoute('sortie_liste');
         }
 
         $sortie->addParticipant($participant);
+        $this->addFlash(
+            'success',
+            'Vous vous êtes inscrit à la sortie.'
+        );
 
         $manager->flush();
         return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
