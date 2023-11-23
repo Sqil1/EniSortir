@@ -37,7 +37,7 @@ class AppFixtures extends Fixture
         }
 
         // Etat
-        $etatNames = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'passée', 'Annulée', 'Historisée'];
+        $etatNames = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée', 'Historisée'];
 
         foreach ($etatNames as $i => $etatName) {
             $etat = new Etat();
@@ -95,11 +95,11 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 20; $i++) {
             $sortie = new Sortie();
             $sortie
-                ->setNom($this->faker->word())
+                ->setNom($this->faker->company())
                 ->setDateHeureDebut($this->faker->dateTimeThisYear())
                 ->setDuree($this->faker->numberBetween(30, 240))
                 ->setDateLimiteInscription($this->faker->dateTimeThisMonth('+2 weeks'))
-                ->setNbInscriptionsMax($this->faker->randomDigit())
+                ->setNbInscriptionsMax($this->faker->numberBetween(2, 12))
                 ->setInfosSortie($this->faker->sentence())
                 ->setLieu($this->getReference('lieu_' . $i))
                 ->setCampus($this->getReference('campus_' . $this->faker->numberBetween(0, 2)))
