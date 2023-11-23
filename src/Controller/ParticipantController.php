@@ -19,8 +19,10 @@ class ParticipantController extends AbstractController
 {
     #[Route('/participant/edit/{id}', name: 'participant.edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function edit(Participant $participant, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    public function edit(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, ParticipantRepository $participantRepository, int $id): Response
     {
+        $participant = $participantRepository->find($id);
+        $campusNames = ['SAINT-HERBLAIN', 'CHARTRES DE BRETAGNE', 'LA ROCHE SUR YON'];
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
@@ -30,6 +32,7 @@ class ParticipantController extends AbstractController
         }
 
         $form = $this->createForm(ParticipantType::class, $participant);
+        $participant->setImageFile(null);
 
         $form->handleRequest($request);
 
@@ -39,7 +42,6 @@ class ParticipantController extends AbstractController
                 $hashedPassword = $hasher->hashPassword($participant, $nouveauMotPasse);
                 $participant->setMotPasse($hashedPassword);
             }
-
 
             $manager->persist($participant);
             $manager->flush();
@@ -52,6 +54,8 @@ class ParticipantController extends AbstractController
 
         return $this->render('participant/edit.html.twig', [
             'form' => $form->createView(),
+            'participant' => $participant,
+            'campusNames' => $campusNames,
         ]);
     }
 

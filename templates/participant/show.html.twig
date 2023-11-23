@@ -6,41 +6,56 @@
 {% endblock %}
 
 {% block body %}
-	<h1>{{ participant.pseudo }}</h1>
-	<form method="post" action="{{ path('participant.show', {'id': participant.id}) }}">
+	<div class="container">
+		<h1 class="display-5 my-3 text-center">{{ participant.pseudo }}</h1>
+		<form method="post" action="{{ path('participant.show', {'id': participant.id}) }}">
+			<div class="row">
+				<div class="col-md-4">
+					{% if participant.imageName is defined %}
+						<img src="{{ asset('/images/participant/upload/' ~ participant.imageName) }}" alt="Photo de profil" width="200" height="200">
+					{% else %}
+						<p>Aucune photo de profil</p>
+					{% endif %}
+				</div>
+				<div class="col-md-8 ml-md-0 mx-auto" style="max-width: 600px;">
 
-		{% if participant.ImageName %}
-			<img src="{{ asset('/images/participant/upload/' ~ participant.imageName) }} " alt="Photo de profil" width="100" height="100">
-		{% else %}
-			<p>Aucune photo de profil</p>
-		{% endif %}
 
+					<div class="form-group row mb-3">
+						<label class="col-sm-12 col-md-4 col-form-label" for="prenom" class="form-label">Prénom:</label>
+						<div class="col-sm-12 col-md-8">
+							<input type="text" class="form-control" id="prenom" name="prenom" value="{{ participant.prenom }}" readonly>
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="prenom" class="form-label">Prénom</label>
-			<input type="text" class="form-control" id="prenom" name="prenom" value="{{ participant.prenom }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label class="col-sm-12 col-md-4 col-form-label" for="nom" class="form-label">Nom:</label>
+						<div class="col-sm-12 col-md-8">
+							<input type="text" class="form-control" id="nom" name="nom" value="{{ participant.nom }}" readonly>
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="nom" class="form-label">Nom</label>
-			<input type="text" class="form-control" id="nom" name="nom" value="{{ participant.nom }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label class="col-sm-12 col-md-4 col-form-label" for="telephone" class="form-label">Téléphone:</label>
+						<div class="col-sm-12 col-md-8">
+							<input type="tel" class="form-control" id="telephone" name="telephone" value="{{ participant.telephone }}" readonly>
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="telephone" class="form-label">Téléphone</label>
-			<input type="tel" class="form-control" id="telephone" name="telephone" value="{{ participant.telephone }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label class="col-sm-12 col-md-4 col-form-label" for="email" class="form-label">Email:</label>
+						<div class="col-sm-12 col-md-8">
+							<input type="email" class="form-control" id="email" name="email" value="{{ participant.email }}" readonly>
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="email" class="form-label">Email</label>
-			<input type="email" class="form-control" id="email" name="email" value="{{ participant.email }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label class="col-sm-12 col-md-4 col-form-label" for="campus" class="form-label">Campus:</label>
+						<div class="col-sm-12 col-md-8">
+							<input type="text" class="form-control" id="campus" name="campus" value="{{ participant.campus.nom }}" readonly>
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="campus" class="form-label">Campus</label>
-			<input type="text" class="form-control" id="campus" name="campus" value="{{ participant.campus.nom }}" readonly>
-		</div>
-
-		<a href="{{ path('home') }}" class="btn btn-secondary">Retour</a>
-	</form>
-{% endblock %}
+					<a href="{{ path('home') }}" class="btn btn-secondary" style="width: 180px">Retour</a>
+				</form>
+			</div>
+		{% endblock %}
