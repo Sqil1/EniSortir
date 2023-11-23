@@ -54,8 +54,7 @@ class SortieController extends AbstractController
                 $sortie->setEtat($etatOuverte);
             } else {
                 return $this->render('sortie/create.html.twig', [
-                    'sortieForm' => $sortieForm->createView(),
-                    'methode' => 0
+                    'sortieForm' => $sortieForm->createView()
                 ]);
             }
 
@@ -67,8 +66,7 @@ class SortieController extends AbstractController
         }
 
         return $this->render('sortie/create.html.twig', [
-            'sortieForm' => $sortieForm->createView(),
-            'methode' => 0
+            'sortieForm' => $sortieForm->createView()
         ]);
     }
 
@@ -100,7 +98,7 @@ class SortieController extends AbstractController
 
     #[Route( '/modifier/{id}', name: 'modifier', requirements:['id' => '\d+'] )]
     public function modifierSortie( Request $request, SortieRepository $sortieRepository, Sortie $sortie,
-                            EtatRepository $etatRepository, EntityManagerInterface $entityManager ) : Response {
+                                    EtatRepository $etatRepository, EntityManagerInterface $entityManager ) : Response {
 
         $sortieForm = $this->createForm( SortieType::class, $sortie );
         $sortieForm->get('ville')->setData( $sortie->getLieu()->getVille() );
@@ -122,8 +120,7 @@ class SortieController extends AbstractController
                 $sortie->setEtat($etatOuverte);
             } else {
                 return $this->render('sortie/create.html.twig', [
-                    'sortieForm' => $sortieForm->createView(),
-                    'methode' => 1
+                    'sortieForm' => $sortieForm->createView()
                 ]);
             }
 
@@ -134,9 +131,19 @@ class SortieController extends AbstractController
         }
 
         return $this->render('sortie/create.html.twig', [
-            'sortieForm' => $sortieForm->createView(),
-            'methode' => 1
+            'sortieForm' => $sortieForm->createView()
         ]);
+    }
+
+
+    #[Route( '/supprimer/{id}', name: 'supprimer', requirements:['id' => '\d+'] )]
+    public function supprimerSortie( Request $request, Sortie $sortie, EntityManagerInterface $entityManager ): Response {
+
+        $entityManager->remove($sortie);
+        $entityManager->flush();
+        $this->addFlash( 'success', 'La sortie a bien été supprimée !' );
+        return $this->redirectToRoute( 'sortie_liste' );
+
     }
 
 

@@ -78,13 +78,6 @@ class SortieType extends AbstractType
                     return $villeRepository->createQueryBuilder('c')->orderBy('c.nom', 'ASC');
                 }
             ])
-            ->add( 'lieu', EntityType::class, [
-                'class' => Lieu::class,
-                'choice_label' => 'nom',
-                'choices' => [],
-                'placeholder' => "Veuillez choisir une ville",
-                'label' => 'Lieux :'
-            ])
             ->add('rue', TextType::class, [
                 'mapped' => false,
                 'label' => 'Rue :',
@@ -123,25 +116,6 @@ class SortieType extends AbstractType
             ])
         ;
 
-        //*********   DANS LE CAS D'UNE MODIFICATION DE SORTIE, *********************
-        //****   CHARGEMENT DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE   *******
-        $builder->get('ville')->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-                $ville = $event->getForm()->getData();
-                $lieu = ( $ville === null ) ? [] : $ville->getLieux();
-                $form = $event->getForm()->getParent();
-                $form->add( 'lieu', EntityType::class, [
-                    'class' => Lieu::class,
-                    'choices' => $lieu,
-                    'choice_label' => 'nom',
-                    'placeholder' => "Veuillez choisir un lieu",
-                    'label' => 'Lieux :'
-                ]);
-            }
-        );
-        //****************************************************************************
-
         //**RECUPERATION DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE CHOISIE****
 
         $formModifier = function(FormInterface $form, Ville $ville = null) {
@@ -160,6 +134,19 @@ class SortieType extends AbstractType
             function(FormEvent $event) use ($formModifier) {
                 $ville = $event->getForm()->getData();
                 $formModifier( $event->getForm()->getParent(), $ville );
+            }
+        );
+        //****************************************************************************
+
+        //*********   DANS LE CAS D'UNE MODIFICATION DE SORTIE, *********************
+        //****   CHARGEMENT DE LA LISTE DES LIEUX CORRESPONDANT A LA VILLE   *******
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) use ($formModifier) {
+                $sortie = $event->getData();
+                $ville = ( null === $sortie->getLieu() ? null : $sortie->getLieu()->getVille() );
+                $event->getForm()->get('ville')->setData($ville);
+                $formModifier($event->getForm(), $ville);
             }
         );
         //****************************************************************************

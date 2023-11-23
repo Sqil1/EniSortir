@@ -15,7 +15,6 @@ window.onload = () => {
     ville.addEventListener("change", function(){
         let form = this.closest("form");
         let data = this.name + "=" + this.value;
-        console.log((2));
         fetch( form.action, {
             method: form.getAttribute("method"),
             body: data,
@@ -30,6 +29,7 @@ window.onload = () => {
                 const html = parser.parseFromString(text, 'text/html');
                 let nouveauSelect = html.querySelector("#sortie_lieu");
                 document.querySelector("#sortie_lieu").innerHTML = nouveauSelect.innerHTML;
+                //document.querySelector("#sortie_lieu").replaceWith(nouveauSelect);
                 document.querySelector("#sortie_rue").value = '';
                 document.querySelector("#sortie_codePostal").value = '';
                 document.querySelector("#sortie_latitude").value = '';
