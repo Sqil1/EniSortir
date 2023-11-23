@@ -187,13 +187,17 @@ class SortieController extends AbstractController
         if (
             !$etatOuverte ||
             $sortie->getEtat() !== $etatOuverte ||
-            new \DateTime() > $sortie->getDateLimiteInscription() ||
+            new \DateTime() >= $sortie->getDateLimiteInscription() ||
             $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()
         ) {
             return $this->redirectToRoute('sortie_liste');
         }
 
         $sortie->addParticipant($participant);
+        $this->addFlash(
+            'success',
+            'Vous vous êtes inscrit à la sortie.'
+        );
 
         $manager->flush();
         return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
