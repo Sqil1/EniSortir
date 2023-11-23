@@ -22,6 +22,7 @@ class ParticipantController extends AbstractController
     public function edit(Participant $participant, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, ParticipantRepository $participantRepository, int $id): Response
     {
         $participant = $participantRepository->find($id);
+        $campusNames = ['SAINT-HERBLAIN', 'CHARTRES DE BRETAGNE', 'LA ROCHE SUR YON'];
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
@@ -54,7 +55,8 @@ class ParticipantController extends AbstractController
 
         return $this->render('participant/edit.html.twig', [
             'form' => $form->createView(),
-            'participant' => $participant
+            'participant' => $participant,
+            'campusNames' => $campusNames,
         ]);
     }
 
