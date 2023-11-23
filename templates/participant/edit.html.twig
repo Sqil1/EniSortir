@@ -14,7 +14,9 @@
 		<div class="row">
 			<div class="col-md-4">
 				{% if participant.imageName is defined %}
-					<img src="{{ asset('/images/participant/upload/' ~ participant.imageName) }}" alt="Photo de profil" width="200" height="200">
+					<img src="{{ vich_uploader_asset(participant, 'imageFile') }}" alt="Photo de profil" width="200" height="200">
+				{% else %}
+					<p>Aucune photo de profil</p>
 				{% endif %}
 			</div>
 
@@ -89,7 +91,7 @@
 						</button>
 					</div>
 					<div class="form-group col-sm-4 mt-2">
-						<button class="btn btn-lg btn-primary" type="submit">
+						<button class="btn btn-lg btn-warning" type="submit">
 							Annuler
 						</button>
 					</div>
