@@ -5,119 +5,128 @@
 {% endblock %}
 
 {% block body %}
-
 	<h1 class="display-5 my-3 text-center">Afficher une sortie</h1>
 
 	<form method="post" action="{{ path('sortie_detail', {'id': sortie.id}) }}">
-		<div class="row mt-3 d-flex justify-content-center">
-			<div class="col-4 mx-5">
-				<div class="form-group row mb-3">
-					<label for="nom" class="col-sm-12 col-md-6 fw-bold  form-label">Nom de la sortie:
-					</label>
-					{{ sortie.nom }}</label>
+		<div class="container">
+			<div class="row mt-3 d-flex justify-content-center">
+
+				<div class="col-md-6">
+					<div class="form-group row mb-3">
+						<label for="nom" class="col-sm-12 col-md-6 fw-bold form-label">Nom de la sortie:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-4">
+						<label for="dateHeureDebut" class="col-sm-12 col-md-6 form-label fw-bold">Date et heure de la sortie:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.dateHeureDebut|date('d-m-Y') }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="dateLimiteInscription" class="col-sm-12 col-md-6 form-label fw-bold">Date limite d'inscription:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.dateLimiteInscription|date('d-m-Y') }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="nbInscriptionsMax" class="col-sm-12 col-md-6 form-label fw-bold">Nombre de place:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.nbInscriptionsMax }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="duree" class="col-sm-12 col-md-6 form-label fw-bold">Durée:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.duree }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="infosSortie" class="col-sm-12 col-md-6 form-label fw-bold">Description et infos:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.infosSortie }}
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="form-group row mb-3">
+						<label for="campus" class="col-sm-12 col-md-6 form-label fw-bold">Campus:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.campus.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="lieu" class="col-sm-12 col-md-6 form-label fw-bold">Lieu:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.ville.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="rue" class="col-sm-12 col-md-6 form-label fw-bold">Rue:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.rue }},
+							{{ sortie.lieu.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="codePostal" class="col-sm-12 col-md-6 form-label fw-bold">Code postal:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.ville.codePostal }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="latitude" class="col-sm-12 col-md-6 form-label fw-bold">Latitude:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.latitude }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="longitude" class="col-sm-12 col-md-6 form-label fw-bold">Longitude:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.longitude }}
+						</div>
+					</div>
+				</div>
 			</div>
 
-
-			<div class="form-group row mb-4">
-				<label for="dateHeureDebut" class="col-sm-12 col-md-6 form-label fw-bold">Date et heure de la sortie:
-				</label>
-				{{ sortie.dateHeureDebut|date('d-m-Y') }}
-			</div>
-
-
-			<div class="form-group row mb-3">
-				<label for="dateLimiteInscription" class="col-sm-12 col-md-6 form-label fw-bold">Date limite d'inscription:
-				</label>
-				{{ sortie.dateLimiteInscription|date('d-m-Y') }}
-			</div>
-
-			<div class="form-group row mb-3">
-				<label for="nbInscriptionsMax" class="col-sm-12 col-md-6 form-label fw-bold">Nombre de place:
-				</label>
-				{{ sortie.nbInscriptionsMax }}
-			</div>
-			<div class="form-group row mb-3">
-				<label for="duree" class="col-sm-12 col-md-6 form-label fw-bold">Durée:
-				</label>
-				{{ sortie.duree }}
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="infosSortie" class="col-sm-12 col-md-6 form-label fw-bold">Description et infos:
-				</label>
-				{{ sortie.infosSortie }}
-
+			<h4>Liste des participants inscrits:</h4>
+			<div class="col-3" style="max-height: 200px; overflow-y: auto;">
+				{% if sortie.participants is not empty %}
+					<table class="table" size="5">
+						<thead>
+							<tr>
+								<th>Pseudo</th>
+								<th>Nom</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for participant in sortie.participants %}
+								<tr>
+									<td>{{ participant.pseudo }}</td>
+									<td>
+										<a href="{{ path('participant.show', {'id': participant.id}) }}">{{ participant.nom }}
+											{{ participant.prenom }}</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<p>Aucun participant inscrit pour le moment.</p>
+				{% endif %}
 			</div>
 		</div>
-
-		<div class="col-4 mx-5">
-			<div class="form-group row mb-3">
-				<label for="campus" class="col-sm-12 col-md-6 form-label fw-bold">Campus:
-				</label>
-				{{ sortie.campus.nom }}
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="lieu" class="col-sm-12 col-md-6 form-label fw-bold">Lieu:
-				</label>
-				{{ sortie.lieu.ville.nom }}
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="rue" class="col-sm-12 col-md-4 form-label fw-bold">Rue:
-				</label>
-				{{ sortie.lieu.rue }},
-				{{ sortie.lieu.nom }}
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="codePostal" class="col-sm-12 col-md-6 form-label fw-bold">Code postal:
-				</label>
-				{{ sortie.lieu.ville.codePostal }}
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="latitude" class="col-sm-12 col-md-6 form-label fw-bold">Latitude:
-				</label>
-				{{ sortie.lieu.latitude }}
-
-
-			</div>
-			<div class="form-group row mb-3">
-				<label for="longitude" class="col-sm-12 col-md-6 form-label fw-bold">Longitude:
-				</label>
-				{{ sortie.lieu.longitude }}
-
-			</div>
-		</div>
-	</div>
-
-
-	<h4>Liste des participants inscrits:</h4>
-	<div class="col-3" style="max-height: 200px; overflow-y: auto;">
-
-		{% if sortie.participants is not empty %}
-			<table class="table" size="5">
-				<thead>
-					<tr>
-						<th>Pseudo</th>
-						<th>Nom</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for participant in sortie.participants %}
-						<tr>
-							<td>{{ participant.pseudo }}</td>
-							<td>
-								<a href="{{ path('participant.show', {'id': participant.id}) }}">{{ participant.nom }}
-									{{ participant.prenom }}</a>
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		{% else %}
-			<p>Aucun participant inscrit pour le moment.</p>
-		{% endif %}
-	</div>
-</div></form>{% endblock %}
+	</form>
+{% endblock %}
