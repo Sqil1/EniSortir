@@ -10,15 +10,12 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="container">
+    <div class="container mt-4 mb-4">
         {% include 'sortie/filter.html.twig' with {form: form} only %}
     </div>
 
     <section class="">
-        <div class="container-filtre">
 
-
-        </div>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -37,7 +34,8 @@
                 <tr>
                     <th>{{ sortie.nom }}</th>
                     <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
-                    <th>{{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}</th>
+                    <th>{{ sortie.dateLimiteInscription | date('d/m/Y')  }}</th>
+{#                    {{ dump(sortie.dateLimiteInscription) }}#}
                     <th>{{ nombreParticipantsInscrits[sortie.id] }}/{{ sortie.nbInscriptionsMax }}</th>
                     <th>{{ sortie.etat.libelle }}</th>
                     <th>{{ utilisateurConnecte in sortie.participants ? 'x' : '' }}</th>
@@ -45,18 +43,20 @@
                     <th>
                         <a href="{{ path('sortie_detail', {'id': sortie.id}) }}" class="btn btn-secondary">Afficher</a>
                         {% if sortie.dateLimiteInscription > 'now' %}
-                            {% if sortie.dateLimiteInscription > 'now' and sortie.etat.libelle in ['Ouverte', 'Clôturée'] %}
+
+                            {% if sortie.dateLimiteInscription|date('Y-m-d') >= 'now'|date('Y-m-d') and sortie.etat.libelle in ['Ouverte', 'Clôturée'] %}
                                 {% if utilisateurConnecte in sortie.participants %}
                                     <a href="{{ path('sortie_desistement', {'id': sortie.id}) }}" class="btn btn-danger">Se
                                         désister</a>
                                 {% else %}
-                                    <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-primary">S'inscrire</a>
+                                    <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" class="btn btn-success">S'inscrire</a>
                                 {% endif %}
                             {% endif %}
 
                             {% if sortie.etat.libelle is same as('Créée') and utilisateurConnecte is same as sortie.organisateur %}
                                 <a href="{{ path('sortie_modifier', {'id': sortie.id}) }}" class="btn btn-primary">Modifier</a>
                             {% endif %}
+
                         {% endif %}
                     </th>
                 </tr>
@@ -64,6 +64,10 @@
             </tbody>
         </table>
     </section>
+
+<div class="d-flex flex-wrap align-items-center">
+    <a href="{{ path('sortie_creer') }}" class="btn btn-lg btn-success btn-block btn-block mt-2 ms-4 mb-4" >Creer une sortie</a>
+</div>
 
 {% endblock %}
 

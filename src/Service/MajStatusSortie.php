@@ -28,16 +28,15 @@ class MajStatusSortie
     {
         $ouverte = $this->entityManager->getRepository(Sortie::class)->findByEtat('Ouverte');
 
+        $dateActuelle = new \DateTime();
+
         foreach ($ouverte as $sortie) {
-            if ($sortie->getDateHeureDebut() <= new \DateTime()) {
-                // Ajouter la durée de la sortie à la date de début
+            if ($sortie->getDateHeureDebut() <= $dateActuelle) {
                 $dateFin = clone $sortie->getDateHeureDebut();
                 $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-                // Vérifier si la date de fin est atteinte ou dépassée
-                if ($dateFin >= new \DateTime()) {
+                if ($dateFin >= $dateActuelle) {
                     $etatEnCoursId = $this->entityManager->getRepository(Etat::class)
                         ->findOneBy(['libelle' => 'Activité en cours'])->getId();
-                    // Récupérer la référence de l'état 'En cours' avec l'id
                     $etatEnCours = $this->entityManager->getReference(Etat::class, $etatEnCoursId);
                     $sortie->setEtat($etatEnCours);
                 }
@@ -45,15 +44,16 @@ class MajStatusSortie
         }
         $this->entityManager->flush();
     }
-
     private function updateEnCoursToPassee(): void
     {
         $enCours = $this->entityManager->getRepository(Sortie::class)->findByEtat('Activité en cours');
 
+        $dateActuelle = new \DateTime();
+
         foreach ($enCours as $sortie) {
             $dateFin = clone $sortie->getDateHeureDebut();
             $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-            if ($dateFin <= new \DateTime()) {
+            if ($dateFin <= new $dateActuelle) {
                 $etatPasseeId = $this->entityManager->getRepository(Etat::class)
                     ->findOneBy(['libelle' => 'Passée'])->getId();
                 $etatPassee = $this->entityManager->getReference(Etat::class, $etatPasseeId);
@@ -68,29 +68,27 @@ class MajStatusSortie
         $ouvertes = $this->entityManager->getRepository(Sortie::class)->findByEtat('Ouverte');
         $clotures = $this->entityManager->getRepository(Sortie::class)->findByEtat('Clôturée');
 
+        $dateActuelle = new \DateTime();
+
         foreach ($ouvertes as $sortie) {
-            // Récupérer le nombre de participants inscrits à la sortie
             $nombreParticipantsInscrits = count($sortie->getParticipants());
-            // Vérifier si le nombre d'inscriptions maximal est atteint
-            if ($nombreParticipantsInscrits >= $sortie->getNbInscriptionsMax()) {
-                $etatClotureId = $this->entityManager->getRepository(Etat::class)
-                    ->findOneBy(['libelle' => 'Clôturée'])->getId();
-                $etatCloture = $this->entityManager->getReference(Etat::class, $etatClotureId);
-                $sortie->setEtat($etatCloture);
-            } else {
-                // Si le nombre d'inscriptions maximal n'est pas atteint,
-                // vérifier si la date limite d'inscription est toujours valide
-                if ($sortie->getDateLimiteInscription() > new \DateTime()) {
-                    $etatOuverteId = $this->entityManager->getRepository(Etat::class)
-                        ->findOneBy(['libelle' => 'Ouverte'])->getId();
-                    $etatOuverte = $this->entityManager->getReference(Etat::class, $etatOuverteId);
-                    $sortie->setEtat($etatOuverte);
+            if ($nombreParticipantsInscrits < $sortie->getNbInscriptionsMax()) {
+                if ($sortie->getDateLimiteInscription() > $dateActuelle) {
+                $etatOuverteId = $this->entityManager->getRepository(Etat::class)
+                    ->findOneBy(['libelle' => 'Ouverte'])->getId();
+                $etatOuverte = $this->entityManager->getReference(Etat::class, $etatOuverteId);
+                $sortie->setEtat($etatOuverte);
                 }
+            } else {
+                    $etatClotureId = $this->entityManager->getRepository(Etat::class)
+                        ->findOneBy(['libelle' => 'Cloturée'])->getId();
+                    $etatCloture = $this->entityManager->getReference(Etat::class, $etatClotureId);
+                    $sortie->setEtat($etatCloture);
             }
         }
         foreach ($clotures as $sortieCloture) {
-            // Vérifier si la date de début de la sortie est future
-            if ($sortieCloture->getDateHeureDebut() > new \DateTime()) {
+            $nombreParticipantsInscritsCloture = count($sortieCloture->getParticipants());
+            if ($sortieCloture->getDateHeureDebut() > $dateActuelle && $nombreParticipantsInscritsCloture < $sortieCloture->getNbInscriptionsMax()) {
                 $etatOuverteId = $this->entityManager->getRepository(Etat::class)
                     ->findOneBy(['libelle' => 'Ouverte'])->getId();
                 $etatOuverte = $this->entityManager->getReference(Etat::class, $etatOuverteId);

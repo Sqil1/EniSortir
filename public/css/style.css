@@ -45,20 +45,11 @@ footer p {
 }
 
 /* FORMULAIRE */
-/*
-label {
-    display: block;
-}
 
-input, textarea, select {
-    margin-bottom: 1rem;
-    box-sizing: border-box;
-    width: 150px;
-    max-width: 50%;
-}*/
 #sortie_infosSortie {
     height: 8rem;
 }
+
 /* Styles pour le tableau d'affichage des sorties*/
 
 .container-filtre {
@@ -116,7 +107,6 @@ input, textarea, select {
     margin-left: 10px;
 }
 
-/* Styles pour le tableau d'affichage des sorties*/
 .tab-liste-sortie {
     width: 100%;
     border-collapse: collapse;

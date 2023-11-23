@@ -5,14 +5,97 @@
 
 {% block body %}
 	<div class="container">
-		<h1 class="mt-4">Mon profil</h1>
+		<h1 class="display-5 my-3 text-center">Mon profil</h1>
 		{% for message in app.flashes('success') %}
 			<div class="alert alert-success mt-4">
 				{{ message }}
 			</div>
 		{% endfor %}
+		<div class="row">
+			<div class="col-md-4 mb-3">
+				{% if participant.imageName is defined %}
+					<img src="{{ vich_uploader_asset(participant, 'imageFile') }}" alt="Photo de profil" class="img-fluid">
+				{% else %}
+					<p>Aucune photo de profil</p>
+				{% endif %}
+			</div>
 
-		{{form(form)}}
-			<a href="{{ path("home") }}" class="btn btn-secondary">Annuler</a>
+			<div class="col-md-8 mx-auto" style="max-width: 600px;">
+				{{ form_start(form) }}
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="pseudo">Pseudo:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ participant.pseudo }}">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="prenom">Prénom:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="prenom" name="prenom" value="{{ participant.prenom }}">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="nom">Nom:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="nom" name="nom" value="{{ participant.nom }}">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="telephone">Téléphone:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="telephone" name="telephone" value="{{ participant.telephone }}">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="email">Email:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="email" name="email" value="{{ participant.email }}">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="motPasse">Mot de passe:</label>
+					<div class="col-sm-8">
+						<input type="password" class="form-control" id="motPasse" name="motPasse" required>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="confirmationMotPasse">Confirmation:</label>
+					<div class="col-sm-8">
+						<input type="password" class="form-control" id="confirmationMotPasse" name="confirmationMotPasse" required>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label fw-bold" for="campus">Campus:</label>
+					<div class="col-sm-8">
+						<select class="form-control" id="campus" name="campus">
+							{% for campusOption in campusNames %}
+								<option value="{{ campusOption }}" {% if campusOption == participant.campus %} selected {% endif %}>
+									{{ campusOption }}
+								</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+				<div class="row mb-3 d-flex justify-content-between">
+					<div class="col-sm-6">
+						<button class="btn btn-lg btn-primary" type="submit">Enregistrer</button>
+					</div>
+					<div class="col-sm-6">
+						<button class="btn btn-lg btn-warning" type="submit">Annuler</button>
+					</div>
+				</div>
+
+				{{ form_end(form) }}
+			</div>
 		</div>
-	{% endblock %}
+	</div>
+{% endblock %}

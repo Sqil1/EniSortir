@@ -1,101 +1,132 @@
 {% extends 'base.html.twig' %}
 
-{#en attendant l'affichage#}
-
 {% block title %}Sortir |
 	{{ sortie.nom }}
 {% endblock %}
 
 {% block body %}
-
-	<h1>Afficher une sortie</h1>
+	<h1 class="display-5 my-3 text-center">Afficher une sortie</h1>
 
 	<form method="post" action="{{ path('sortie_detail', {'id': sortie.id}) }}">
-		<div class="mb-3">
-			<label for="nom" class="form-label">Nom de la sortie</label>
-			<input type="text" class="form-control" id="nom" name="nom" value="{{ sortie.nom }}" readonly>
-		</div>
+		<div class="container">
+			<div class="row mt-3 d-flex justify-content-center">
 
-		<div class="mb-3">
-			<label for="dateHeureDebut" class="form-label">Date et heure de la sortie</label>
-			<input type="date" class="form-control" id="dateHeureDebut" name="dateHeureDebut" value="{{ sortie.dateHeureDebut|date('d-m-Y') }}" readonly>
-		</div>
+				<div class="col-md-4 mx-5">
+					<div class="form-group row mb-3">
+						<label for="nom" class="col-sm-12 col-md-6 fw-bold form-label">Nom de la sortie:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.nom }}
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="dateLimiteInscription" class="form-label">Date limite d'inscription</label>
-			<input type="date" class="form-control" id="dateLimiteInscription" name="dateLimiteInscription" value="{{ sortie.dateLimiteInscription|date('d-m-Y') }}" readonly>
-		</div>
+					<div class="form-group row mb-4">
+						<label for="dateHeureDebut" class="col-sm-12 col-md-6 form-label fw-bold">Date et heure de la sortie:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.dateHeureDebut|date('d-m-Y') }}
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="nbInscriptionsMax" class="form-label">Nombre de place</label>
-			<input type="text" class="form-control" id="nbInscriptionsMax" name="nbInscriptionsMax" value="{{ sortie.nbInscriptionsMax }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="duree" class="form-label">Durée</label>
-			<input type="number" class="form-control" id="duree" name="duree" value="{{ sortie.duree }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="infosSortie" class="form-label">Description et infos</label>
-			<input type="text" class="form-control" id="infosSortie" name="infosSortie" value="{{ sortie.infosSortie }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label for="dateLimiteInscription" class="col-sm-12 col-md-6 form-label fw-bold">Date limite d'inscription:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.dateLimiteInscription|date('d-m-Y') }}
+						</div>
+					</div>
 
+					<div class="form-group row mb-3">
+						<label for="nbInscriptionsMax" class="col-sm-12 col-md-6 form-label fw-bold">Nombre de place:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.nbInscriptionsMax }}
+						</div>
+					</div>
 
-		<div class="mb-3">
-			<label for="campus" class="form-label">Campus</label>
-			<input type="text" class="form-control" id="campus" name="campus" value="{{ sortie.campus.nom }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="lieu" class="form-label">Lieu</label>
-			<input type="text" class="form-control" id="lieu" name="lieu" value="{{ sortie.lieu.ville.nom }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="rue" class="form-label">Rue</label>
-			<input type="text" class="form-control" id="rue" name="rue" value="{{ sortie.lieu.rue }}, {{ sortie.lieu.nom }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="codePostal" class="form-label">Code postal</label>
-			<input type="text" class="form-control" id="codePostal" name="codePostal" value="{{ sortie.lieu.ville.codePostal }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="latitude" class="form-label">Latitude</label>
-			<input type="text" class="form-control" id="latitude" name="latitude" value="{{ sortie.lieu.latitude }}" readonly>
-		</div>
-		<div class="mb-3">
-			<label for="longitude" class="form-label">Longitude</label>
-			<input type="text" class="form-control" id="longitude" name="longitude" value="{{ sortie.lieu.longitude }}" readonly>
-		</div>
+					<div class="form-group row mb-3">
+						<label for="duree" class="col-sm-12 col-md-6 form-label fw-bold">Durée:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.duree }}
+						</div>
+					</div>
 
+					<div class="form-group row mb-3">
+						<label for="infosSortie" class="col-sm-12 col-md-6 form-label fw-bold">Description et infos:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.infosSortie }}
+						</div>
+					</div>
+				</div>
 
-		<div class="mb-3">
-			<h2>Liste des participants inscrits</h2>
+				<div class="col-md-4 mx-5">
+					<div class="form-group row mb-3">
+						<label for="campus" class="col-sm-12 col-md-6 form-label fw-bold">Campus:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.campus.nom }}
+						</div>
+					</div>
 
-			{% if sortie.participants is not empty %}
-				<table class="table" size="5">
-					<thead>
-						<tr>
-							<th>Pseudo</th>
-							<th>Nom et prénom</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for participant in sortie.participants %}
+					<div class="form-group row mb-3">
+						<label for="lieu" class="col-sm-12 col-md-6 form-label fw-bold">Lieu:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.ville.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="rue" class="col-sm-12 col-md-6 form-label fw-bold">Rue:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.rue }},
+							{{ sortie.lieu.nom }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="codePostal" class="col-sm-12 col-md-6 form-label fw-bold">Code postal:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.ville.codePostal }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="latitude" class="col-sm-12 col-md-6 form-label fw-bold">Latitude:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.latitude }}
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label for="longitude" class="col-sm-12 col-md-6 form-label fw-bold">Longitude:</label>
+						<div class="col-sm-12 col-md-6">
+							{{ sortie.lieu.longitude }}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<h4>Liste des participants inscrits:</h4>
+			<div class="col-3" style="max-height: 200px; overflow-y: auto;">
+				{% if sortie.participants is not empty %}
+					<table class="table" size="5">
+						<thead>
 							<tr>
-								<td>{{ participant.pseudo }}</td>
-								<td>
-									<a href="{{ path('participant.show', {'id': participant.id}) }}">{{ participant.nom }}
-										{{ participant.prenom }}</a>
-								</td>
+								<th>Pseudo</th>
+								<th>Nom</th>
 							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% else %}
-				<p>Aucun participant inscrit pour le moment.</p>
-			{% endif %}
+						</thead>
+						<tbody>
+							{% for participant in sortie.participants %}
+								<tr>
+									<td>{{ participant.pseudo }}</td>
+									<td>
+										<a href="{{ path('participant.show', {'id': participant.id}) }}">{{ participant.nom }}
+											{{ participant.prenom }}</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<p>Aucun participant inscrit pour le moment.</p>
+				{% endif %}
+			</div>
 		</div>
-
-
-		<a href="{{ path('sortie_liste') }}" class="btn btn-secondary">Retour</a>
-
 	</form>
 {% endblock %}
