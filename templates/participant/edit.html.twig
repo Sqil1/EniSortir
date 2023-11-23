@@ -13,8 +13,8 @@
 		{% endfor %}
 		<div class="row">
 			<div class="col-md-4">
-				{% if form.vars.data.imageName is defined %}
-					<img src="{{ asset('/images/participant/upload/' ~ form.vars.data.imageName) }}" alt="Photo de profil" width="200" height="200">
+				{% if participant.imageName is defined %}
+					<img src="{{ asset('/images/participant/upload/' ~ participant.imageName) }}" alt="Photo de profil" width="200" height="200">
 				{% endif %}
 			</div>
 

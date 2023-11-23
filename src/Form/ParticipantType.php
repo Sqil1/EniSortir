@@ -148,6 +148,7 @@ class ParticipantType extends AbstractType
                 'placeholder' => 'Sélectionnez votre campus',
             ])
 
+
             ->add('submit', SubmitType::class, [
                 'attr' => [
                     'class' => 'btn btn-primary mt-4',

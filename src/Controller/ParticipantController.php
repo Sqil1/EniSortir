@@ -43,7 +43,6 @@ class ParticipantController extends AbstractController
                 $participant->setMotPasse($hashedPassword);
             }
 
-
             $manager->persist($participant);
             $manager->flush();
 
