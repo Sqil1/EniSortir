@@ -28,21 +28,25 @@ class Sortie
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "Veuillez renseigner la date et l'heure de la sortie")]
+    #[Assert\GreaterThanOrEqual('today')]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Veuillez renseigner la durée de la sortie")]
     #[Assert\Type(type: "integer", message: "Veuillez entrer un nombre")]
+    #[Assert\Positive]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank(message: "Veuillez renseigner la date limite d'inscription")]
     #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
+    #[Assert\GreaterThanOrEqual('today')]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Veuillez renseigner le nombre maximal de participants")]
     #[Assert\Type(type: "integer", message: "Veuillez entrer un nombre")]
+    #[Assert\Positive]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT)]
