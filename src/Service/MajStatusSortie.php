@@ -20,142 +20,62 @@ class MajStatusSortie
     public function updateSortieStates(): void
     {
         $this->updateOuverteToCloturee();
-        $this->updateClotureeToOuverte();
-//        $this->updateOuverteToEnCours();
-//        $this->updateEnCoursToPassee();
-//
-//        $this->updatePasseToHisto();
+        $this->updateClotureToEnCours();
+        $this->updateEnCoursToPassee();
+        $this->updatePasseeToHistorisee();
+        $this->updateAnnuleeToHistorisee();
     }
 
-//    private function updateOuverteToEnCours(): void
-//    {
-//        $ouverte = $this->entityManager->getRepository(Sortie::class)->findByEtat('Ouverte');
-//
-//        $dateActuelle = new \DateTime();
-//        $etatEnCours = $this->entityManager->getRepository(Etat::class)
-//            ->findOneBy(['libelle' => 'Activité en cours'])->getId();
-//
-//        foreach ($ouverte as $sortie) {
-//            if ($sortie->getDateHeureDebut() <= $dateActuelle) {
-//                $dateFin = clone $sortie->getDateHeureDebut();
-//                $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-//                if ($dateFin >= $dateActuelle) {
-//                    $sortie->setEtat($etatEnCours);
-//                }
-//            }
-//        }
-//        $this->entityManager->flush();
-//    }
-
-//    private function updateEnCoursToPassee(): void
-//    {
-//        $enCours = $this->entityManager->getRepository(Sortie::class)->findByEtat('Activité en cours');
-//        $etatPassee = $this->entityManager->getRepository(Etat::class)
-//            ->findOneBy(['libelle' => 'Passée'])->getId();
-//        $dateActuelle = new \DateTime();
-//
-//        foreach ($enCours as $sortie) {
-//            $dateFin = clone $sortie->getDateHeureDebut();
-//            $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-//            if ($dateFin <= new $dateActuelle) {
-//                $sortie->setEtat($etatPassee);
-//            }
-//        }
-//        $this->entityManager->flush();
-//    }
-
-    private function updateOuverteToCloturee(SortieRepository $sortieRepository): void
+    private function updateOuverteToCloturee(): void
     {
-        $sortiesOuvertes = $this->entityManager->getRepository(Sortie::class)->findOuverteToFermee();
-        $etatCloture = $this->entityManager->getRepository(Etat::class)
+        $sortiesOuvertesToCloturees = $this->entityManager->getRepository(Sortie::class)->findOuvertesToCloturees();
+        $etatCloturee = $this->entityManager->getRepository(Etat::class)
             ->findOneBy(['libelle' => 'Cloturée']);
-        $etatOuvert = $this->entityManager->getRepository(Etat::class)
-            ->findOneBy(['libelle' => 'Ouverte']);
-
-        foreach ($sortiesOuvertes as $sortie) {
-            $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
-            dump($nombreParticipantsInscrits);
-            if ($nombreParticipantsInscrits === $sortie->getNbInscriptionsMax()) {
-                $sortie->setEtat($etatCloture);
-            }
+        foreach ($sortiesOuvertesToCloturees as $sortie) {
+            $sortie->setEtat($etatCloturee);
         }
+        $this->entityManager->flush();
     }
-    private function updateClotureeToOuverte(): void
+
+    private function updateClotureToEnCours(): void
     {
-        $sortiesCloturees = $this->entityManager->getRepository(Sortie::class)->findFermeeToOuvert();
-        $etatCloture = $this->entityManager->getRepository(Etat::class)
-            ->findOneBy(['libelle' => 'Cloturée']);
-        $etatOuvert = $this->entityManager->getRepository(Etat::class)
-            ->findOneBy(['libelle' => 'Ouverte']);
-
-        foreach ($sortiesCloturees as $sortie) {
-            $nombreParticipantsInscrits = count($sortie->getParticipants());
-            if ($nombreParticipantsInscrits < $sortie->getNbInscriptionsMax()) {
-                $sortie->setEtat($etatOuvert);
-                dump($sortie);
-            }
-
+        $sortiesClotureToEnCours = $this->entityManager->getRepository(Sortie::class)->findClotureesToEnCours();
+        $etatEnCours = $this->entityManager->getRepository(Etat::class)
+            ->findOneBy(['libelle' => 'Activité en cours']);
+        foreach ($sortiesClotureToEnCours as $sortie) {
+            $sortie->setEtat($etatEnCours);
         }
+        $this->entityManager->flush();
+    }
+    private function updateEnCoursToPassee(): void
+    {
+        $sortiesEnCoursToPassee = $this->entityManager->getRepository(Sortie::class)->findEnCoursToPassee();
+        $etatPassee = $this->entityManager->getRepository(Etat::class)
+            ->findOneBy(['libelle' => 'Passée']);
+        foreach ($sortiesEnCoursToPassee as $sortie){
+            $sortie->setEtat($etatPassee);
+        }
+        $this->entityManager->flush();
+    }
+    private function updatePasseeToHistorisee(): void
+    {
+        $sortiesPasseeToHistorisee = $this->entityManager->getRepository(Sortie::class)->updatePasseeToHistorisee();
+        $etatHistorisee = $this->entityManager->getRepository(Etat::class)
+            ->findOneBy(['libelle' => 'Historisée']);
+        foreach ($sortiesPasseeToHistorisee as $sortie){
+            $sortie->setEtat($etatHistorisee);
+        }
+        $this->entityManager->flush();
+    }
+    private function updateAnnuleeToHistorisee(): void
+    {
+        $sortiesAnnuleeToHistorisee = $this->entityManager->getRepository(Sortie::class)->updateAnnuleeToHistorisee();
+        $etatHistorisee = $this->entityManager->getRepository(Etat::class)
+            ->findOneBy(['libelle' => 'Historisée']);
+        foreach ($sortiesAnnuleeToHistorisee as $sortie){
+            $sortie->setEtat($etatHistorisee);
+        }
+        $this->entityManager->flush();
     }
 
-
-//        $ouvertes = $this->entityManager->getRepository(Sortie::class)->findByEtat('Ouverte');
-//        $clotures = $this->entityManager->getRepository(Sortie::class)->findByEtat('Clôturée');
-//        $etatOuverte = $this->entityManager->getRepository(Etat::class)
-//            ->findOneBy(['libelle' => 'Ouverte']);
-//        $etatCloture = $this->entityManager->getRepository(Etat::class)
-//            ->findOneBy(['libelle' => 'Cloturée']);
-//        $dateActuelle = new \DateTime();
-//
-//        foreach ($ouvertes as $sortie) {
-//            $nombreParticipantsInscrits = count($sortie->getParticipants());
-//            if ($nombreParticipantsInscrits < $sortie->getNbInscriptionsMax()) {
-//                if ($sortie->getDateLimiteInscription() > $dateActuelle) {
-//                $sortie->setEtat($etatOuverte);
-//                }
-//            } else {
-//                    $sortie->setEtat($etatCloture);
-//            }
-//        }
-//        foreach ($clotures as $sortieCloture) {
-//            $nombreParticipantsInscritsCloture = count($sortieCloture->getParticipants());
-//            if ($sortieCloture->getDateHeureDebut() > $dateActuelle && $nombreParticipantsInscritsCloture < $sortieCloture->getNbInscriptionsMax()) {
-//
-//                $sortieCloture->setEtat($etatOuverte);
-//            }
-//        }
-//        $this->entityManager->flush();
-
-
-//    private function updatePasseToHisto(): void
-//    {
-//        $passee = $this->entityManager->getRepository(Sortie::class)->findByEtat('Passée');
-//        $annulee = $this->entityManager->getRepository(Sortie::class)->findByEtat('Annulée');
-//        $etatHistorisee = $this->entityManager->getRepository(Etat::class)
-//            ->findOneBy(['libelle' => 'Historisée']);
-//        $dateActuelle = new \DateTime();
-//
-//        $dateMoinsUnMois = $dateActuelle->sub(new \DateInterval('P1M'));
-//
-//        foreach ($passee as $sortie) {
-//            if ($sortie->getDateHeureDebut() <= $dateActuelle) {
-//                $dateFin = clone $sortie->getDateHeureDebut();
-//                $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-//                if ($dateFin < $dateMoinsUnMois) {
-//                    $sortie->setEtat($etatHistorisee);
-//                }
-//            }
-//        }
-//        foreach ($annulee as $sortie) {
-//            if ($sortie->getDateHeureDebut() <= $dateActuelle) {
-//                $dateFin = clone $sortie->getDateHeureDebut();
-//                $dateFin->modify('+' . $sortie->getDuree() . ' minutes');
-//
-//                if ($dateFin < $dateMoinsUnMois) {
-//                    $sortie->setEtat($etatHistorisee);
-//                }
-//            }
-//        }
-//        $this->entityManager->flush();
-//    }
 }

@@ -89,6 +89,7 @@ class SortieRepository extends ServiceEntityRepository
         }
         return $query->getQuery()->getResult();
     }
+
     public function participantsInscritsCounts(): array
     {
         $qb = $this->createQueryBuilder('s')
@@ -104,37 +105,72 @@ class SortieRepository extends ServiceEntityRepository
         }
         return $nombreParticipantsInscrits;
     }
-    public function findByEtat(string $etatLibelle): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->join('s.etat', 'e')
-            ->andWhere('e.libelle = :etatLibelle')
-            ->setParameter('etatLibelle', $etatLibelle);
 
-        return $queryBuilder->getQuery()->getResult();
-    }
-    public function findOuverteToFermee()
+    public function findOuvertesToCloturees()
     {
         $queryBuilder = $this
             ->createQueryBuilder('s')
             ->select('s', 'e')
             ->join('s.etat', 'e')
             ->andWhere('s.etat = :etatOuvert')
-            ->andWhere('s.dateLimiteInscription > :dateActuelle')
+            ->andWhere('s.dateLimiteInscription < :dateActuelle')
             ->setParameter('etatOuvert', 02)
             ->setParameter('dateActuelle', new \DateTime('midnight'));
         return $queryBuilder->getQuery()->getResult();
     }
-    public function findFermeeToOuvert()
+
+    public function findClotureesToEnCours()
     {
         $queryBuilder = $this
             ->createQueryBuilder('s')
             ->select('s', 'e')
             ->join('s.etat', 'e')
-            ->andWhere('s.etat = :etatOuvert')
-            ->andWhere('s.dateLimiteInscription > :dateActuelle')
-            ->setParameter('etatOuvert', 03)
-            ->setParameter('dateActuelle', new \DateTime('midnight'));
+            ->andWhere('s.etat = :etatCloturee')
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') > :dateActuelle')
+            ->setParameter('etatCloturee', 03)
+            ->setParameter('dateActuelle', new \DateTime());
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findEnCoursToPassee()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s', 'e')
+            ->join('s.etat', 'e')
+            ->andWhere('s.etat = :etatEnCours')
+            ->setParameter('etatEnCours', 04);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function updatePasseeToHistorisee()
+    {
+        $dateActuellePlusUnMois = new \DateTime();
+        $dateActuellePlusUnMois->sub(new \DateInterval('P1M'));
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s', 'e')
+            ->join('s.etat', 'e')
+            ->andWhere('s.etat = :etatPassee')
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') < :dateActuellePlusUnMois')
+            ->setParameter('etatPassee', 05)
+            ->setParameter('dateActuellePlusUnMois', $dateActuellePlusUnMois);
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function updateAnnuleeToHistorisee()
+    {
+        $dateActuellePlusUnMois = new \DateTime();
+        $dateActuellePlusUnMois->add(new \DateInterval('P1M'));
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s', 'e')
+            ->join('s.etat', 'e')
+            ->andWhere('s.etat = :etatAnnulee')
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') < :dateActuellePlusUnMois')
+            ->setParameter('etatAnnulee', 06)
+            ->setParameter('dateActuellePlusUnMois', $dateActuellePlusUnMois);
         return $queryBuilder->getQuery()->getResult();
     }
 }
