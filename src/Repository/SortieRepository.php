@@ -107,10 +107,34 @@ class SortieRepository extends ServiceEntityRepository
     public function findByEtat(string $etatLibelle): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->Join('s.etat', 'e')
+            ->join('s.etat', 'e')
             ->andWhere('e.libelle = :etatLibelle')
             ->setParameter('etatLibelle', $etatLibelle);
 
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function findOuverteToFermee()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s', 'e')
+            ->join('s.etat', 'e')
+            ->andWhere('s.etat = :etatOuvert')
+            ->andWhere('s.dateLimiteInscription > :dateActuelle')
+            ->setParameter('etatOuvert', 02)
+            ->setParameter('dateActuelle', new \DateTime('midnight'));
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function findFermeeToOuvert()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s', 'e')
+            ->join('s.etat', 'e')
+            ->andWhere('s.etat = :etatOuvert')
+            ->andWhere('s.dateLimiteInscription > :dateActuelle')
+            ->setParameter('etatOuvert', 03)
+            ->setParameter('dateActuelle', new \DateTime('midnight'));
         return $queryBuilder->getQuery()->getResult();
     }
 }
