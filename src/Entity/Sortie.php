@@ -37,6 +37,7 @@ class Sortie
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank(message: "Veuillez renseigner la date limite d'inscription")]
+    #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
