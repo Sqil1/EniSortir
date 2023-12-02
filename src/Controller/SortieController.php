@@ -154,9 +154,6 @@ class SortieController extends AbstractController
     public function liste(SortieRepository $sortieRepository, Request $request, Security $security, MajStatusSortie $dateFin): Response
     {
         $this->majStatusSortie->updateSortieStates();
-
-        $nombreParticipantsInscrits = $sortieRepository->participantsInscritsCounts();
-
         $data = new SearchData();
         $form = $this->createForm(SearchForm::class, $data);
         $form->handleRequest($request);
@@ -166,7 +163,10 @@ class SortieController extends AbstractController
 
         $sorties = $sortieRepository->findSearch($data);
 
-        // Utilisez JsonResponse pour retourner les résultats en JSON
+        $nombreParticipantsInscrits = [];
+        foreach ($sorties as $sortie) {
+            $nombreParticipantsInscrits[$sortie->getId()] = $sortieRepository->countParticipantsInscritsForSortie($sortie->getId());
+        }
 
         return $this->render('sortie/liste.html.twig', [
             'sorties' => $sorties,
@@ -175,6 +175,7 @@ class SortieController extends AbstractController
             'utilisateurConnecte' => $utilisateurConnecte,
         ]);
     }
+
 
     #[Route('/show/{id}', name: 'detail')]
     public function show(int $id, SortieRepository $sortieRepository): Response
@@ -189,37 +190,53 @@ class SortieController extends AbstractController
     }
 
     #[Route('/inscription/{id}', name: 'inscription')]
-    public function inscription(Sortie $sortie, EntityManagerInterface $manager, EtatRepository $etat): RedirectResponse
+    public function inscription(Sortie           $sortie, EntityManagerInterface $manager, EtatRepository $etatRepository,
+                                SortieRepository $sortieRepository): RedirectResponse
     {
         $participant = $this->getUser();
         $dateActuelle = new \DateTime('midnight');
-        $etatOuverte = $etat->findOneBy(['libelle' => 'Ouverte']);
+        $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
         if (
             !$etatOuverte ||
             $sortie->getEtat() !== $etatOuverte ||
             $dateActuelle > $sortie->getDateLimiteInscription() ||
             $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()
         ) {
-
             return $this->redirectToRoute('sortie_liste');
         }
 
         $sortie->addParticipant($participant);
+
+
+        if ($sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()) {
+            // Mettre à jour l'état de la sortie en "Clôturée"
+            $etatCloturee = $etatRepository->findOneBy(['libelle' => 'Clôturée']);
+            $sortie->setEtat($etatCloturee);
+
+            $this->addFlash(
+                'success',
+                'La sortie est maintenant clôturée car le nombre maximal d\'inscriptions a été atteint.'
+            );
+        }
+
         $this->addFlash(
             'success',
             'Vous vous êtes inscrit à la sortie.'
         );
 
         $manager->flush();
+
         return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
+
     }
 
     #[Route('/desistement/{id}', name: 'desistement')]
-    public function desister(Sortie $sortie, EntityManagerInterface $manager): Response
+    public function desister(Sortie $sortie, EntityManagerInterface $manager, EtatRepository $etatRepository): Response
     {
         $participant = $this->getUser();
-
         $now = new \DateTime();
+
 
         if ($sortie->getDateHeureDebut() > $now && ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')) {
             $sortie->removeParticipant($participant);
@@ -235,7 +252,17 @@ class SortieController extends AbstractController
                 'Vous ne pouvez pas vous désister de cette sortie.'
             );
         }
+        if ($sortie->getParticipants()->count() < $sortie->getNbInscriptionsMax()) {
+            // Mettre à jour l'état de la sortie en "Clôturée"
+            $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+            $sortie->setEtat($etatOuverte);
 
+            $this->addFlash(
+                'success',
+                'La sortie est maintenant clôturée car le nombre maximal d\'inscriptions a été atteint.'
+            );
+        }
+        $manager->flush();
         return $this->redirectToRoute('sortie_liste', ['id' => $sortie->getId()]);
     }
 

@@ -90,21 +90,17 @@ class SortieRepository extends ServiceEntityRepository
         return $query->getQuery()->getResult();
     }
 
-    public function participantsInscritsCounts(): array
+    public function countParticipantsInscritsForSortie(int $sortieId): int
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.id AS sortie_id', 'COUNT(p) AS nombreParticipantsInscrits')
+            ->select('COUNT(p) AS nombreParticipantsInscrits')
             ->leftJoin('s.participants', 'p')
-            ->groupBy('s.id');
+            ->where('s.id = :sortieId')
+            ->setParameter('sortieId', $sortieId);
 
-        $results = $qb->getQuery()->getResult();
-
-        $nombreParticipantsInscrits = [];
-        foreach ($results as $result) {
-            $nombreParticipantsInscrits[$result['sortie_id']] = $result['nombreParticipantsInscrits'];
-        }
-        return $nombreParticipantsInscrits;
+        return $qb->getQuery()->getSingleScalarResult();
     }
+
 
     public function findOuvertesToCloturees()
     {
@@ -119,18 +115,20 @@ class SortieRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+
     public function findClotureesToEnCours()
     {
+
         $queryBuilder = $this
             ->createQueryBuilder('s')
             ->select('s', 'e')
             ->join('s.etat', 'e')
             ->andWhere('s.etat = :etatCloturee')
-            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') > :dateActuelle')
+            ->andWhere(':dateActuelle BETWEEN s.dateHeureDebut AND DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\')')
             ->setParameter('etatCloturee', 03)
             ->setParameter('dateActuelle', new \DateTime());
 
-        return $queryBuilder->getQuery()->getResult();
+            return $queryBuilder->getQuery()->getResult();
     }
 
     public function findEnCoursToPassee()
@@ -140,7 +138,9 @@ class SortieRepository extends ServiceEntityRepository
             ->select('s', 'e')
             ->join('s.etat', 'e')
             ->andWhere('s.etat = :etatEnCours')
-            ->setParameter('etatEnCours', 04);
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') < :dateActuelle')
+            ->setParameter('etatEnCours', 04)
+        ->setParameter('dateActuelle', new \DateTime());
 
         return $queryBuilder->getQuery()->getResult();
     }

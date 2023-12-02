@@ -21,9 +21,9 @@ class MajStatusSortie
     {
         $this->updateOuverteToCloturee();
         $this->updateClotureToEnCours();
-        $this->updateEnCoursToPassee();
-        $this->updatePasseeToHistorisee();
-        $this->updateAnnuleeToHistorisee();
+//        $this->updateEnCoursToPassee();
+//        $this->updatePasseeToHistorisee();
+//        $this->updateAnnuleeToHistorisee();
     }
 
     private function updateOuverteToCloturee(): void
@@ -39,6 +39,7 @@ class MajStatusSortie
 
     private function updateClotureToEnCours(): void
     {
+
         $sortiesClotureToEnCours = $this->entityManager->getRepository(Sortie::class)->findClotureesToEnCours();
         $etatEnCours = $this->entityManager->getRepository(Etat::class)
             ->findOneBy(['libelle' => 'Activité en cours']);
@@ -46,36 +47,41 @@ class MajStatusSortie
             $sortie->setEtat($etatEnCours);
         }
         $this->entityManager->flush();
+
     }
+
     private function updateEnCoursToPassee(): void
     {
         $sortiesEnCoursToPassee = $this->entityManager->getRepository(Sortie::class)->findEnCoursToPassee();
         $etatPassee = $this->entityManager->getRepository(Etat::class)
             ->findOneBy(['libelle' => 'Passée']);
-        foreach ($sortiesEnCoursToPassee as $sortie){
+        foreach ($sortiesEnCoursToPassee as $sortie) {
             $sortie->setEtat($etatPassee);
         }
         $this->entityManager->flush();
     }
+
     private function updatePasseeToHistorisee(): void
     {
         $sortiesPasseeToHistorisee = $this->entityManager->getRepository(Sortie::class)->updatePasseeToHistorisee();
         $etatHistorisee = $this->entityManager->getRepository(Etat::class)
             ->findOneBy(['libelle' => 'Historisée']);
-        foreach ($sortiesPasseeToHistorisee as $sortie){
+        foreach ($sortiesPasseeToHistorisee as $sortie) {
             $sortie->setEtat($etatHistorisee);
         }
         $this->entityManager->flush();
     }
+
     private function updateAnnuleeToHistorisee(): void
     {
         $sortiesAnnuleeToHistorisee = $this->entityManager->getRepository(Sortie::class)->updateAnnuleeToHistorisee();
         $etatHistorisee = $this->entityManager->getRepository(Etat::class)
             ->findOneBy(['libelle' => 'Historisée']);
-        foreach ($sortiesAnnuleeToHistorisee as $sortie){
+        foreach ($sortiesAnnuleeToHistorisee as $sortie) {
             $sortie->setEtat($etatHistorisee);
         }
         $this->entityManager->flush();
     }
+
 
 }

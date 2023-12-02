@@ -35,7 +35,6 @@
                     <th>{{ sortie.nom }}</th>
                     <th>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</th>
                     <th>{{ sortie.dateLimiteInscription | date('d/m/Y')  }}</th>
-{#                    {{ dump(sortie.dateLimiteInscription) }}#}
                     <th>{{ nombreParticipantsInscrits[sortie.id] }}/{{ sortie.nbInscriptionsMax }}</th>
                     <th>{{ sortie.etat.libelle }}</th>
                     <th>{{ utilisateurConnecte in sortie.participants ? 'x' : '' }}</th>
