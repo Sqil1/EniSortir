@@ -138,7 +138,7 @@ class SortieRepository extends ServiceEntityRepository
             ->select('s', 'e')
             ->join('s.etat', 'e')
             ->andWhere('s.etat = :etatEnCours')
-            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') < :dateActuelle')
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'MINUTE\') > :dateActuelle')
             ->setParameter('etatEnCours', 04)
         ->setParameter('dateActuelle', new \DateTime());
 

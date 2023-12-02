@@ -21,9 +21,9 @@ class MajStatusSortie
     {
         $this->updateOuverteToCloturee();
         $this->updateClotureToEnCours();
-//        $this->updateEnCoursToPassee();
-//        $this->updatePasseeToHistorisee();
-//        $this->updateAnnuleeToHistorisee();
+        $this->updateEnCoursToPassee();
+        $this->updatePasseeToHistorisee();
+        $this->updateAnnuleeToHistorisee();
     }
 
     private function updateOuverteToCloturee(): void

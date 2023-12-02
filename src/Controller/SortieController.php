@@ -259,7 +259,7 @@ class SortieController extends AbstractController
 
             $this->addFlash(
                 'success',
-                'La sortie est maintenant clôturée car le nombre maximal d\'inscriptions a été atteint.'
+                'La sortie est maintenant ouverte car une place vient de se libérer.'
             );
         }
         $manager->flush();
