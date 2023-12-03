@@ -1,0 +1,21 @@
+<div class="">
+
+    {{ form_start(form, {attr: {class: 'filter'}}) }}
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-4">
+        <div class="col-lg-3 col-md-8 col-sm-12">
+            <h4 class="">Le nom contient :</h4>
+            {{ form_row(form.c) }}
+
+
+            <div class="col-lg-3 col-md-8 col-sm-12">
+                <button class="btn btn-lg btn-primary btn-block mt-4" type="submit" style="font-size: 2rem;">
+                    Rechercher
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

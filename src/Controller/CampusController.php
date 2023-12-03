@@ -3,8 +3,15 @@
 namespace App\Controller;
 
 
+use App\Data\SearchData;
+use App\Data\SearchDataCampus;
+use App\Entity\Campus;
+use App\Form\CampusType;
+use App\Form\SearchForm;
+use App\Form\SearchFormCampus;
 use App\Repository\CampusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,11 +19,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class CampusController extends AbstractController
 {
     #[Route('/liste', name: 'liste')]
-    public function create(CampusRepository $campusRepository): Response
+    public function create(CampusRepository $campusRepository, Request $request): Response
     {
+        $data = new SearchDataCampus();
+        $form = $this->createForm(SearchFormCampus::class, $data);
+        $form->handleRequest($request);
 
-        $campus = $campusRepository->findAll();
+        $campus = $campusRepository->findSearch($data);
 
-        return $this->render('campus/listeCampus.html.twig', [ 'campus' => $campus ]);
+        return $this->render('campus/listeCampus.html.twig', [
+            'campus' => $campus,
+            'form' => $form->createView()
+            ]);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\CampusRepository;
 use App\Repository\VilleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

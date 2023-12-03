@@ -3,7 +3,6 @@
 namespace App\Data;
 
 use App\Entity\Campus;
-use App\Entity\Sortie;
 
 class SearchData
 {
