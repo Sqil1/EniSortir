@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Data\SearchDataVille;
+use App\Form\SearchFormVille;
 use App\Repository\VilleRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,11 +14,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class VilleController extends AbstractController
 {
     #[Route('/liste', name: 'liste')]
-    public function create(VilleRepository $villeRepository): Response
+    public function create(VilleRepository $villeRepository, Request $request): Response
     {
 
-        $villes = $villeRepository->findAll();
+        $data = new SearchDataVille();
+        $form = $this->createForm(SearchFormVille::class, $data);
+        $form->handleRequest($request);
 
-        return $this->render('ville/listeVille.html.twig', ['villes' => $villes]);
+        $villes = $villeRepository->findSearch($data);
+
+        return $this->render('ville/listeVille.html.twig', [
+            'villes' => $villes,
+            'form' => $form->createView()
+        ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Data\SearchDataCampus;
+use App\Data\SearchDataVille;
 use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,28 +23,23 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
     }
 
-//    /**
-//     * @return Ville[] Returns an array of Ville objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('v')
-//            ->andWhere('v.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('v.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findSearch(SearchDataVille $searchVille)
+    {
+        $query = $this
+            ->createQueryBuilder('v')
+            ->select('v')
+            ->orderBy('v.nom', 'ASC');
 
-//    public function findOneBySomeField($value): ?Ville
-//    {
-//        return $this->createQueryBuilder('v')
-//            ->andWhere('v.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if (!empty($searchVille->v)) {
+            $query = $query
+                ->andWhere('v.nom LIKE :q')
+                ->setParameter('q', "%{$searchVille->v}%");
+        }
+        if (!empty($searchVille->codePostal)) {
+            $query = $query
+                ->andWhere('v.codePostal LIKE :q')
+                ->setParameter('q', "%{$searchVille->codePostal}%");
+        }
+        return $query->getQuery()->getResult();
+    }
 }

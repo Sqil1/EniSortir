@@ -3,11 +3,7 @@
 namespace App\Controller;
 
 
-use App\Data\SearchData;
 use App\Data\SearchDataCampus;
-use App\Entity\Campus;
-use App\Form\CampusType;
-use App\Form\SearchForm;
 use App\Form\SearchFormCampus;
 use App\Repository\CampusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
