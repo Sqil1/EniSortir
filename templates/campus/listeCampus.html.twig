@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1 class="display-5 my-3 text-center">Gestion des campus</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Campus</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for campu in campus %}
+            <tr>
+                <th>{{ campu.nom }}</th>
+                <th></th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

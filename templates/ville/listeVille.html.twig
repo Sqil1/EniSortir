@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1 class="display-5 my-3 text-center">Gestion des villes</h1>
+
+    <div class="container mt-4 mb-4">
+        {% include 'ville/filter.html.twig' %}
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Campus</th>
+            <th>Code Postal</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for ville in villes %}
+            <tr>
+                <th>{{ ville.nom }}</th>
+                <th>{{ ville.codePostal }}</th>
+                <th></th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
