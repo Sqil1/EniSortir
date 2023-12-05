@@ -19,10 +19,18 @@
         <tbody>
         {% for campu in campus %}
             <tr>
-                <th>{{ campu.nom }}</th>
-                <th></th>
+                <td>{{ campu.nom }}</td>
+                <td></td>
             </tr>
         {% endfor %}
+        <tr>
+            <td>
+                {{ form_start(addCampusForm) }}
+                {{ form_row(addCampusForm.nom) }}
+                {{ form_end(addCampusForm) }}
+            </td>
+            <td><button type="submit" class="btn btn-success">Save</button></td>
+        </tr>
         </tbody>
     </table>
 
