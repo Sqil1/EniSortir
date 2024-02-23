@@ -161,6 +161,7 @@ class SortieController extends AbstractController
 
         $sorties = $sortieRepository->findSearch($data);
 
+        //TODO suppr foreach
         $nombreParticipantsInscrits = [];
         foreach ($sorties as $sortie) {
             $nombreParticipantsInscrits[$sortie->getId()] = $sortieRepository->countParticipantsInscritsForSortie($sortie->getId());
